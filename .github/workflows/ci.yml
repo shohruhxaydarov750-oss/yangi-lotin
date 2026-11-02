@@ -1,0 +1,41 @@
+name: Windows checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.14']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run transliteration and Windows integration tests
+        run: python -m unittest discover -s tests -v
+
+  executable:
+    needs: tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+      - name: Build and package Windows release
+        shell: pwsh
+        run: .\release.ps1
+      - uses: actions/upload-artifact@v7
+        with:
+          name: YangiLotin-Windows
+          path: release/*
+          if-no-files-found: error

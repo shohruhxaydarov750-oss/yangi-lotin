@@ -1,0 +1,32 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 6, 1, 0),
+    prodvers=(1, 6, 1, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo(
+      [
+        StringTable(
+          "040904B0",
+          [
+            StringStruct("CompanyName", "Yangi Lotin contributors"),
+            StringStruct("FileDescription", "Uzbek Cyrillic and Latin converter"),
+            StringStruct("FileVersion", "1.6.1"),
+            StringStruct("InternalName", "YangiLotin"),
+            StringStruct("LegalCopyright", "MIT License"),
+            StringStruct("OriginalFilename", "YangiLotin.exe"),
+            StringStruct("ProductName", "Yangi Lotin - Uzbek script converter"),
+            StringStruct("ProductVersion", "1.6.1")
+          ]
+        )
+      ]
+    ),
+    VarFileInfo([VarStruct("Translation", [1033, 1200])])
+  ]
+)

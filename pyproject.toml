@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uzbek-yangi-lotin"
+version = "1.6.1"
+description = "Convert Uzbek Cyrillic and Latin scripts in both directions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "shohruhxaydarov750-oss" }]
+keywords = ["uzbek", "cyrillic", "latin", "transliteration", "keyboard", "tkinter"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = []
+
+[project.gui-scripts]
+yangi-lotin = "yangi_lotin.gui:main"
+
+[tool.setuptools]
+packages = ["yangi_lotin"]
