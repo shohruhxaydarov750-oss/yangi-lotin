@@ -13,8 +13,8 @@ $releaseRoot = [System.IO.Path]::GetFullPath($OutputDirectory)
 $projectFile = Get-Content -LiteralPath (Join-Path $projectRoot "pyproject.toml") -Raw
 $packageFile = Get-Content -LiteralPath (Join-Path $projectRoot "yangi_lotin\__init__.py") -Raw
 $versionFile = Get-Content -LiteralPath (Join-Path $projectRoot "packaging\version_info.txt") -Raw
-$projectMatch = [regex]::Match($projectFile, '(?m)^version = "([0-9]+\.[0-9]+\.[0-9]+)"$')
-$packageMatch = [regex]::Match($packageFile, '(?m)^__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"$')
+$projectMatch = [regex]::Match($projectFile, '(?m)^version = "([0-9]+\.[0-9]+\.[0-9]+)"\r?$')
+$packageMatch = [regex]::Match($packageFile, '(?m)^__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"\r?$')
 if (-not $projectMatch.Success -or -not $packageMatch.Success) {
     throw "Cannot read the project version."
 }

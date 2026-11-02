@@ -15,7 +15,7 @@ VSVersionInfo(
         StringTable(
           "040904B0",
           [
-            StringStruct("CompanyName", "Yangi Lotin contributors"),
+            StringStruct("CompanyName", "shohruhxaydarov750-oss"),
             StringStruct("FileDescription", "Uzbek Cyrillic and Latin converter"),
             StringStruct("FileVersion", "1.6.1"),
             StringStruct("InternalName", "YangiLotin"),
