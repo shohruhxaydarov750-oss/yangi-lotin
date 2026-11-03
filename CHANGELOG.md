@@ -1,5 +1,15 @@
 # O‘zgarishlar
 
+## 1.6.2 — 2026-11-03
+
+- Eski lotinda `sh/ch/o‘/g‘` yozishning birinchi harfi ham almashtirish bilan
+  bir xil klaviatura oqimidan yuboriladi; brauzer maydonida ortiqcha harf
+  qolishiga sabab bo‘lgan tartib tuzatildi.
+- Oynadagi tushunarsiz **Qo‘lda manba** ro‘yxati o‘rniga natija yozuvi uchun
+  **→ Yangi lotin** va **→ Kirill** tugmalari qo‘shildi.
+- Ctrl+V matnni chap maydonga qo‘yib darhol o‘giradi. Enter o‘giradi,
+  Shift+Enter yangi qator kiritadi.
+
 ## 1.6.1 — 2026-11-02
 
 - Dastur tray'da ishlab turganda EXE qayta ochilsa, mavjud oyna ko‘rsatiladi.

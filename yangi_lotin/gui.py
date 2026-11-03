@@ -17,11 +17,7 @@ from .reverse import count_latin_to_cyrillic, latin_to_cyrillic
 from .tray import WindowsTrayIcon
 from .transliterator import (
     count_all_conversions,
-    count_convertible,
-    count_old_latin_replacements,
-    modernize_old_latin,
     to_new_latin,
-    transliterate,
 )
 
 
@@ -259,25 +255,25 @@ class ConverterApp:
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_rowconfigure(2, weight=1)
 
-        header = tk.Frame(self.root, background=Palette.SURFACE, padx=28, pady=20)
+        header = tk.Frame(self.root, background=Palette.SURFACE, padx=24, pady=12)
         header.grid(row=0, column=0, sticky="ew")
         header.grid_columnconfigure(1, weight=1)
 
         logo = tk.Canvas(
             header,
-            width=60,
-            height=60,
+            width=50,
+            height=50,
             background=Palette.SURFACE,
             highlightthickness=0,
         )
         logo.grid(row=0, column=0, rowspan=2, sticky="w", padx=(0, 16))
-        logo.create_oval(2, 2, 58, 58, fill=Palette.PRIMARY, outline="")
+        logo.create_oval(2, 2, 48, 48, fill=Palette.PRIMARY, outline="")
         logo.create_text(
-            30,
-            30,
+            25,
+            25,
             text="А↔Ö",
             fill="#FFFFFF",
-            font=("Segoe UI Semibold", 13),
+            font=("Segoe UI Semibold", 11),
         )
 
         tk.Label(
@@ -285,7 +281,7 @@ class ConverterApp:
             text="Kirill va lotin yozuvini o‘girish",
             background=Palette.SURFACE,
             foreground=Palette.TEXT,
-            font=("Segoe UI Semibold", 22),
+            font=("Segoe UI Semibold", 20),
             anchor="w",
         ).grid(row=0, column=1, sticky="sw")
         tk.Label(
@@ -293,7 +289,7 @@ class ConverterApp:
             text="Yozayotganda avtomatik yoki oynada qo‘lda o‘giring",
             background=Palette.SURFACE,
             foreground=Palette.MUTED,
-            font=("Segoe UI", 10),
+            font=("Segoe UI", 9),
             anchor="w",
         ).grid(row=1, column=1, sticky="nw", pady=(3, 0))
 
@@ -315,17 +311,17 @@ class ConverterApp:
         )
         self.live_pill.grid(row=0, column=2, rowspan=2, sticky="e", padx=(18, 0))
 
-        modes = tk.Frame(self.root, background=Palette.SURFACE, padx=28, pady=12)
+        modes = tk.Frame(self.root, background=Palette.SURFACE, padx=24, pady=8)
         modes.grid(row=1, column=0, sticky="ew")
         modes.grid_columnconfigure(2, weight=1)
 
         tk.Label(
             modes,
-            text="AVTOMATIK REJIMLAR",
+            text="TELEGRAM VA BOSHQA DASTURLARDA AVTOMATIK",
             background=Palette.SURFACE,
             foreground=Palette.MUTED,
             font=("Segoe UI Semibold", 9),
-        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
+        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 6))
 
         self.cyrillic_toggle = self._make_mode_button(
             modes, "cyrillic", 0
@@ -333,35 +329,9 @@ class ConverterApp:
         self.old_latin_toggle = self._make_mode_button(
             modes, "old_latin", 1
         )
-        tk.Label(
-            modes,
-            text="Har birini alohida yoqing yoki öçiring",
-            background=Palette.SURFACE,
-            foreground=Palette.MUTED,
-            font=("Segoe UI", 9),
-        ).grid(row=1, column=2, sticky="e")
-
-        self.reverse_toggle = tk.Button(
-            modes,
-            command=lambda: self.toggle_conversion_mode("latin_to_cyrillic"),
-            font=("Segoe UI Semibold", 9),
-            padx=14,
-            pady=8,
-            relief="flat",
-            borderwidth=0,
-            highlightthickness=0,
-            cursor="hand2",
+        self.reverse_toggle = self._make_mode_button(
+            modes, "latin_to_cyrillic", 2
         )
-        self.reverse_toggle.grid(
-            row=2, column=0, columnspan=2, sticky="w", pady=(9, 0)
-        )
-        tk.Label(
-            modes,
-            text="Eski va yangi lotindan kirillga",
-            background=Palette.SURFACE,
-            foreground=Palette.MUTED,
-            font=("Segoe UI", 9),
-        ).grid(row=2, column=2, sticky="e", pady=(9, 0))
 
         self.startup_toggle = tk.Button(
             modes,
@@ -374,45 +344,39 @@ class ConverterApp:
             highlightthickness=0,
             cursor="hand2",
         )
-        self.startup_toggle.grid(
-            row=3, column=0, columnspan=2, sticky="w", pady=(10, 0)
-        )
-        tk.Label(
-            modes,
-            text="Windows'ga kirganda tray'da özi işga tüşadi",
-            background=Palette.SURFACE,
-            foreground=Palette.MUTED,
-            font=("Segoe UI", 9),
-        ).grid(row=3, column=2, sticky="e", pady=(10, 0))
+        self.startup_toggle.grid(row=0, column=2, sticky="e", pady=(0, 6))
 
-        body = tk.Frame(self.root, background=Palette.BACKGROUND, padx=28, pady=22)
+        body = tk.Frame(self.root, background=Palette.BACKGROUND, padx=24, pady=12)
         body.grid(row=2, column=0, sticky="nsew")
         body.grid_columnconfigure(0, weight=1, uniform="editor")
         body.grid_columnconfigure(1, weight=1, uniform="editor")
         body.grid_rowconfigure(1, weight=1)
 
-        source_bar = tk.Frame(body, background=Palette.BACKGROUND)
-        source_bar.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 12))
+        manual_bar = tk.Frame(body, background=Palette.BACKGROUND)
+        manual_bar.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 8))
+        manual_bar.grid_columnconfigure(3, weight=1)
         tk.Label(
-            source_bar,
-            text="Qo‘lda manba:",
+            manual_bar,
+            text="SHU OYNADA O‘GIRISH",
+            background=Palette.BACKGROUND,
+            foreground=Palette.MUTED,
+            font=("Segoe UI Semibold", 9),
+        ).grid(row=0, column=0, sticky="w", padx=(0, 12))
+        self.manual_target = self._initial_manual_target()
+        self.latin_target_button = self._make_manual_target_button(
+            manual_bar, "new_latin", "→ Yangi lotin", 1
+        )
+        self.cyrillic_target_button = self._make_manual_target_button(
+            manual_bar, "cyrillic", "→ Kirill", 2
+        )
+        self.manual_hint = tk.Label(
+            manual_bar,
             background=Palette.BACKGROUND,
             foreground=Palette.MUTED,
             font=("Segoe UI", 9),
-        ).grid(row=0, column=0, padx=(0, 8))
-        self.manual_source = tk.StringVar(value=self._initial_manual_source())
-        self.manual_selector = ttk.Combobox(
-            source_bar,
-            textvariable=self.manual_source,
-            values=("Ikkalasi", "Kirill", "Eski lotin", "Lotin → kirill"),
-            state="readonly",
-            width=16,
-            font=("Segoe UI", 9),
+            anchor="w",
         )
-        self.manual_selector.grid(row=0, column=1)
-        self.manual_selector.bind(
-            "<<ComboboxSelected>>", lambda _event: self._invalidate_output()
-        )
+        self.manual_hint.grid(row=1, column=0, columnspan=4, sticky="w", pady=(6, 0))
 
         input_card, input_inner = self._make_card(body, 0)
         output_card, output_inner = self._make_card(body, 1)
@@ -421,17 +385,17 @@ class ConverterApp:
 
         self.input_count = self._make_card_header(
             input_inner,
-            "MANBA MATN",
+            "KIRITILGAN MATN",
         )
         self.output_count = self._make_card_header(output_inner, "NATIJA")
 
         input_editor = tk.Frame(input_inner, background=Palette.SURFACE)
-        input_editor.grid(row=1, column=0, sticky="nsew", padx=18, pady=(2, 18))
+        input_editor.grid(row=1, column=0, sticky="nsew", padx=18, pady=(2, 12))
         input_editor.grid_columnconfigure(0, weight=1)
         input_editor.grid_rowconfigure(0, weight=1)
 
         output_editor = tk.Frame(output_inner, background=Palette.SURFACE)
-        output_editor.grid(row=1, column=0, sticky="nsew", padx=18, pady=(2, 18))
+        output_editor.grid(row=1, column=0, sticky="nsew", padx=18, pady=(2, 12))
         output_editor.grid_columnconfigure(0, weight=1)
         output_editor.grid_rowconfigure(0, weight=1)
 
@@ -440,7 +404,7 @@ class ConverterApp:
 
         self.placeholder = tk.Label(
             input_editor,
-            text="Kirill yoki lotin matnini kiriting…",
+            text="Matn yozing yoki Ctrl+V bosing…",
             background=Palette.SURFACE,
             foreground=Palette.FAINT,
             font=("Segoe UI", 12),
@@ -448,7 +412,7 @@ class ConverterApp:
         )
         self.placeholder.bind("<Button-1>", self._focus_from_placeholder)
 
-        actions = tk.Frame(self.root, background=Palette.BACKGROUND, padx=28)
+        actions = tk.Frame(self.root, background=Palette.BACKGROUND, padx=24)
         actions.grid(row=3, column=0, sticky="ew", pady=(0, 12))
         actions.grid_columnconfigure(2, weight=1)
 
@@ -477,7 +441,7 @@ class ConverterApp:
             style="Quiet.TButton",
         ).grid(row=0, column=4)
 
-        footer = tk.Frame(self.root, background=Palette.SURFACE, padx=28, pady=11)
+        footer = tk.Frame(self.root, background=Palette.SURFACE, padx=24, pady=8)
         footer.grid(row=4, column=0, sticky="ew")
         footer.grid_columnconfigure(1, weight=1)
 
@@ -493,26 +457,44 @@ class ConverterApp:
 
         tk.Label(
             footer,
-            text="Tray ikonka — real-time ON/OFF   ·   Ctrl+Enter — ögiriş   ·   Ctrl+Shift+C — nusxalaş   ·   Ctrl+L — tozala",
+            text="Ctrl+V — qo‘y   ·   Enter — o‘gir   ·   Shift+Enter — yangi qator   ·   Ctrl+Shift+C — nusxala",
             background=Palette.SURFACE,
             foreground=Palette.MUTED,
             font=("Segoe UI", 8),
-        ).grid(row=0, column=1, sticky="e")
+        ).grid(row=1, column=0, columnspan=2, sticky="w", pady=(4, 0))
 
         self.input_text.bind("<<Modified>>", self._input_modified)
         self.input_text.bind("<KeyPress>", self._hide_placeholder, add="+")
         self.input_text.bind("<FocusOut>", lambda _event: self._refresh_placeholder())
 
         self._build_context_menus()
+        self._update_manual_target_ui()
         self._update_startup_ui()
+
+    def _make_manual_target_button(
+        self, parent: tk.Frame, target: str, label: str, column: int
+    ) -> tk.Button:
+        button = tk.Button(
+            parent,
+            text=label,
+            command=lambda: self._select_manual_target(target),
+            font=("Segoe UI Semibold", 10),
+            padx=16,
+            pady=8,
+            relief="flat",
+            borderwidth=1,
+            cursor="hand2",
+        )
+        button.grid(row=0, column=column, sticky="w", padx=(0, 8))
+        return button
 
     def _make_mode_button(self, parent: tk.Frame, name: str, column: int) -> tk.Button:
         button = tk.Button(
             parent,
             command=lambda: self.toggle_conversion_mode(name),
             font=("Segoe UI Semibold", 9),
-            padx=14,
-            pady=8,
+            padx=11,
+            pady=7,
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
@@ -560,7 +542,7 @@ class ConverterApp:
         return border, inner
 
     def _make_card_header(self, parent: tk.Widget, title: str) -> tk.Label:
-        header = tk.Frame(parent, background=Palette.SURFACE, padx=18, pady=15)
+        header = tk.Frame(parent, background=Palette.SURFACE, padx=18, pady=10)
         header.grid(row=0, column=0, sticky="ew")
         header.grid_columnconfigure(0, weight=1)
 
@@ -591,6 +573,8 @@ class ConverterApp:
 
         text = tk.Text(
             parent,
+            width=1,
+            height=1,
             wrap="word",
             undo=not output,
             maxundo=-1,
@@ -652,8 +636,16 @@ class ConverterApp:
         # returns "break", so Ctrl+Enter converts without changing the input.
         self.input_text.bind("<Control-Return>", convert_shortcut)
         self.output_text.bind("<Control-Return>", convert_shortcut)
-        self.root.bind_all("<Control-Shift-V>", self._shortcut(self.paste))
-        self.root.bind_all("<Control-Shift-v>", self._shortcut(self.paste))
+        self.input_text.bind("<Return>", convert_shortcut)
+        self.input_text.bind("<Shift-Return>", self._insert_paragraph_break)
+        self.output_text.bind("<Return>", convert_shortcut)
+        paste_shortcut = self._shortcut(self.paste)
+        for key in ("<Control-v>", "<Control-V>", "<Control-Shift-V>", "<Control-Shift-v>"):
+            # Text's class binding also handles Ctrl+V.  Catch it at widget
+            # level first so a single key press cannot paste twice.
+            self.input_text.bind(key, paste_shortcut)
+            self.output_text.bind(key, paste_shortcut)
+            self.root.bind_all(key, paste_shortcut)
         self.root.bind_all("<Control-Shift-C>", self._shortcut(self.copy))
         self.root.bind_all("<Control-Shift-c>", self._shortcut(self.copy))
         self.root.bind_all("<Control-l>", self._shortcut(self.clear))
@@ -666,6 +658,10 @@ class ConverterApp:
             return "break"
 
         return handler
+
+    def _insert_paragraph_break(self, _event: tk.Event) -> str:
+        self.input_text.insert("insert", "\n")
+        return "break"
 
     def _centre_window(self, width: int, height: int) -> None:
         self.root.update_idletasks()
@@ -703,14 +699,41 @@ class ConverterApp:
         self._invalidate_output()
         self._refresh_placeholder()
 
-    def _initial_manual_source(self) -> str:
+    def _initial_manual_target(self) -> str:
         current = self._modes.current
         selected = current if current.any_enabled else self._modes.last_nonempty
-        if selected.latin_to_cyrillic:
-            return "Lotin → kirill"
-        if selected.cyrillic and selected.old_latin:
-            return "Ikkalasi"
-        return "Kirill" if selected.cyrillic else "Eski lotin"
+        return "cyrillic" if selected.latin_to_cyrillic else "new_latin"
+
+    def _update_manual_target_ui(self) -> None:
+        for button, target in (
+            (self.latin_target_button, "new_latin"),
+            (self.cyrillic_target_button, "cyrillic"),
+        ):
+            active = self.manual_target == target
+            button.configure(
+                background=Palette.PRIMARY if active else Palette.SURFACE,
+                foreground="#FFFFFF" if active else Palette.TEXT,
+                activebackground=Palette.PRIMARY_HOVER if active else Palette.PRIMARY_SOFT,
+                activeforeground="#FFFFFF" if active else Palette.TEXT,
+                highlightbackground=Palette.PRIMARY if active else Palette.BORDER,
+            )
+        if self.manual_target == "new_latin":
+            self.manual_hint.configure(text="Kirill yoki eski lotin matni → yangi lotin")
+        else:
+            self.manual_hint.configure(text="Eski yoki yangi lotin matni → kirill")
+
+    def _select_manual_target(self, target: str) -> None:
+        if target == self.manual_target:
+            self.input_text.focus_set()
+            return
+        if target not in {"new_latin", "cyrillic"}:
+            return
+        self.manual_target = target
+        self._update_manual_target_ui()
+        self._invalidate_output()
+        if self.input_text.get("1.0", "end-1c"):
+            self.convert()
+        self.input_text.focus_set()
 
     def _invalidate_output(self) -> None:
         # Copy must never return a result for older input or another source mode.
@@ -975,7 +998,13 @@ class ConverterApp:
 
         self.input_text.insert("insert", clipboard_text)
         self.input_text.focus_set()
-        self._set_status("Matn qöyildi")
+        # The modified event may still be queued.  Clear stale output now,
+        # before converting, so the queued event cannot erase the new result.
+        self._input_modified(None)
+        if self.input_text.get("1.0", "end-1c"):
+            self.convert()
+        else:
+            self._set_status("Matn qöyildi")
 
     def convert(self) -> None:
         source = self.input_text.get("1.0", "end-1c")
@@ -987,14 +1016,7 @@ class ConverterApp:
             self.input_text.focus_set()
             return
 
-        manual_source = self.manual_source.get()
-        if manual_source == "Kirill":
-            result = transliterate(source)
-            converted = count_convertible(source)
-        elif manual_source == "Eski lotin":
-            result = modernize_old_latin(source)
-            converted = count_old_latin_replacements(source)
-        elif manual_source == "Lotin → kirill":
+        if self.manual_target == "cyrillic":
             result = latin_to_cyrillic(source)
             converted = count_latin_to_cyrillic(source)
         else:

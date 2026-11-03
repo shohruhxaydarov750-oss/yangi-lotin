@@ -703,10 +703,15 @@ class LiveKeyboardTransliterator:
                     )
 
                 plan = self._composer.feed(character)
-                # Ordinary Latin letters are already correct until a second
-                # key completes sh/ch/o'/g'.  Let those original events pass
-                # through; only inject when the rendered text really changes.
-                if plan == EditPlan(0, character):
+                # A leading s/c/o/g can be replaced by sh/ch/o'/g'. Send
+                # that first letter through the same input stream as its
+                # later replacement. Passing the physical first key through
+                # can let a browser process it after our injected Backspace.
+                pair_prefix = (
+                    self._old_latin_enabled
+                    and character.casefold() in {"s", "c", "o", "g"}
+                )
+                if plan == EditPlan(0, character) and not pair_prefix:
                     return int(
                         user32.CallNextHookEx(
                             self._keyboard_hook,

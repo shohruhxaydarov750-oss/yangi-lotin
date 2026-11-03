@@ -223,6 +223,79 @@ class ModeAndCaseTests(unittest.TestCase):
         self.assertFalse(service.enabled)
         self.assertFalse(service._composer.has_token)
 
+    @unittest.skipUnless(os.name == "nt", "Windows keyboard hook")
+    def test_old_latin_pair_prefixes_use_ordered_injection(self) -> None:
+        import ctypes
+        from unittest.mock import patch
+
+        import yangi_lotin.live_mode as live_mode
+
+        class FakeUser32:
+            def __init__(self) -> None:
+                self.forwarded: list[int] = []
+
+            def CallNextHookEx(self, _hook, _code, event, _data) -> int:
+                self.forwarded.append(int(event))
+                return 0
+
+        key_codes = {"s": 0x53, "c": 0x43, "o": 0x4F, "g": 0x47,
+                     "h": 0x48, "'": 0xDE, "a": 0x41}
+        for source, expected in (("sh", "ş"), ("ch", "ç"),
+                                 ("o'", "ö"), ("g'", "ğ")):
+            with self.subTest(source=source):
+                service = LiveKeyboardTransliterator(enabled=False)
+                service.set_modes(False, True)
+                service._foreground_window_info = lambda: (100, False)
+                service._focused_password_field = lambda _hwnd: False
+                service._disallowed_modifier_down = lambda: False
+                characters = {code: char for char, code in key_codes.items()}
+                service._decode_character = lambda data, _hwnd: characters[int(data.vkCode)]
+                visible = ""
+                plans: list[EditPlan] = []
+
+                def inject(plan: EditPlan) -> tuple[int, int]:
+                    nonlocal visible
+                    plans.append(plan)
+                    visible = apply_edit(visible, plan)
+                    return 2, 2
+
+                service._inject_edit = inject
+                fake_user32 = FakeUser32()
+                with patch.object(live_mode, "user32", fake_user32):
+                    for character in source:
+                        key = key_codes[character]
+                        data = live_mode.KBDLLHOOKSTRUCT(
+                            vkCode=key, scanCode=key, flags=0, time=0,
+                            dwExtraInfo=0,
+                        )
+                        pointer = ctypes.addressof(data)
+                        self.assertEqual(service._keyboard_callback(
+                            live_mode.HC_ACTION, live_mode.WM_KEYDOWN, pointer,
+                        ), 1)
+                        self.assertEqual(service._keyboard_callback(
+                            live_mode.HC_ACTION, live_mode.WM_KEYUP, pointer,
+                        ), 1)
+
+                    ordinary = live_mode.KBDLLHOOKSTRUCT(
+                        vkCode=key_codes["a"], scanCode=key_codes["a"],
+                        flags=0, time=0, dwExtraInfo=0,
+                    )
+                    pointer = ctypes.addressof(ordinary)
+                    self.assertEqual(service._keyboard_callback(
+                        live_mode.HC_ACTION, live_mode.WM_KEYDOWN, pointer,
+                    ), 0)
+                    self.assertEqual(service._keyboard_callback(
+                        live_mode.HC_ACTION, live_mode.WM_KEYUP, pointer,
+                    ), 0)
+
+                self.assertEqual(visible, expected)
+                self.assertEqual(plans, [
+                    EditPlan(0, source[0]), EditPlan(1, expected),
+                ])
+                self.assertEqual(fake_user32.forwarded, [
+                    live_mode.WM_KEYDOWN, live_mode.WM_KEYUP,
+                ])
+
     @unittest.skipUnless(os.name == "nt", "Windows keyboard packet")
     def test_unicode_packet_decodes_special_latin_character(self) -> None:
         from yangi_lotin.live_mode import KBDLLHOOKSTRUCT, VK_PACKET

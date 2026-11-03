@@ -1,4 +1,4 @@
-# Yangi Lotin v1.6.1
+# Yangi Lotin v1.6.2
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 
@@ -13,8 +13,9 @@ Ikki xil ishlash rejimi bor:
   dasturlarida yozayotgan matningiz tanlangan yo‘nalishda darhol o‘zgaradi.
   Kirill → yangi lotin va eski lotin → yangi lotin alohida yoqiladi.
   Lotin → kirill yoqilsa, qarama-qarshi ikki rejim o‘chadi.
-- **Qo‘lda o‘girish:** dastur oynasiga tayyor matnni qo‘yib, natijani
-  manba yozuvini tanlab, natijani nusxalash mumkin.
+- **Oynada o‘girish:** natija yozuvini **→ Yangi lotin** yoki **→ Kirill**
+  qilib tanlang. Ctrl+V qo‘yilgan matnni darhol o‘giradi; yozilgan matn
+  Enter bilan o‘giriladi.
 
 Natijada quyidagi yangi harflar ishlatiladi:
 
@@ -150,20 +151,20 @@ Buni faqat bir marta qo‘lda sozlash kerak:
   mumkin. Lotin → kirill rejimi inglizcha so‘zlarni ham o‘zgartiradi.
   Bunday paytda tegishli avtomatik rejimni vaqtincha OFF qiling.
 
-## Qo‘lda o‘girish oynasi
+## Oynada o‘girish
 
-1. **Qo‘lda manba** ro‘yxatidan **Kirill**, **Eski lotin**, **Ikkalasi**
-   (ikkala yangi lotin yo‘nalishi) yoki **Lotin → kirill**ni tanlang.
-2. Chap maydonga matnni yozing yoxud **Qöyiş** tugmasini bosing.
-3. **Ögiriş** tugmasini bosing.
-4. Natijani **Nusxalaş** orqali oling.
-5. **Tozala** ikkala maydonni bo‘shatadi.
+1. **Natija yozuvi** uchun **→ Yangi lotin** yoki **→ Kirill**ni tanlang.
+   Birinchi yo‘nalish kirill va eski lotin matnini, ikkinchisi eski va yangi
+   lotin matnini qabul qiladi.
+2. Chap maydonga matnni **Ctrl+V** bilan qo‘ying yoki **Qöyiş**ni bosing:
+   natija o‘ngda darhol chiqadi. Chap maydonga matnni qo‘lda yozsangiz,
+   **Enter** bosing.
+3. Yangi qator kerak bo‘lsa **Shift+Enter** bosing.
+4. **Nusxalaş** natijani oladi, **Tozala** ikkala maydonni bo‘shatadi.
 
-Qo‘lda o‘girish avtomatik rejimlar OFF bo‘lganda ham ishlaydi. **Kirill**
-tanlansa eski lotin, **Eski lotin** tanlansa kirill matn o‘z holicha qoladi.
-**Lotin → kirill** eski va yangi lotin shakllarini bir xil qabul qiladi.
-Manba matn yoki tanlov o‘zgarsa, avvalgi natija tozalanadi; eskirgan
-natijani tasodifan nusxalab bo‘lmaydi.
+Oynada o‘girish avtomatik rejimlar OFF bo‘lganda ham ishlaydi. Matn
+o‘zgarsa eski natija tozalanadi; natija yo‘nalishini almashtirsangiz,
+joriy matn yangi yo‘nalishda qayta o‘giriladi.
 Buferdan birdaniga qo‘yilgan matn global avtomatik rejimda ushlanmaydi;
 buning uchun shu oynadan foydalaning.
 
@@ -218,12 +219,14 @@ Python 3.10 va 3.14 sinovlarini hamda Windows EXE yig‘ishni bajaradi.
 
 | Amal | Yorliq |
 |---|---|
-| O‘girish | Ctrl+Enter |
-| Buferdan qo‘yish | Ctrl+Shift+V |
+| O‘girish | Matn maydonida Enter yoki Ctrl+Enter |
+| Yangi qator kiritish | Shift+Enter |
+| Buferdan qo‘yish va darhol o‘girish | Ctrl+V yoki Ctrl+Shift+V |
 | Natijani nusxalash | Ctrl+Shift+C |
 | Ikkala maydonni tozalash | Ctrl+L |
 
-Matn maydonlarida odatiy Ctrl+A, Ctrl+C va Ctrl+V ham ishlaydi.
+Ctrl+V oynaning qaysi qismi tanlanganidan qat’i nazar matnni chap maydonga
+qo‘yadi. Matn maydonlarida Ctrl+A va Ctrl+C odatdagidek ishlaydi.
 
 ## O‘girish qoidalari
 
@@ -326,7 +329,7 @@ o‘zgartirgandan keyin eski so‘zning tasodifan tahrirlanishiga yo‘l qo‘ym
 - tests/test_live_mode.py — real-time kompozitsiya testlari;
 - tests/test_mode_state.py — rejimlarni yoqish, o‘chirish va saqlash testlari;
 - tests/test_autostart.py — Windows ishga tushish sozlamasi testlari;
-- tests/test_gui.py — qo‘lda manba va eskirgan natija testlari;
+- tests/test_gui.py — oynadagi yo‘nalish, qo‘yish, Enter va eskirgan natija testlari;
 - build.ps1 — test va portativ EXE yig‘ish;
 - release.ps1 — EXE, ikki ZIP va SHA-256 yig‘indilarini tayyorlash;
 - packaging/version_info.txt — Windows fayl metama’lumoti;
