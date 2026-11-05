@@ -1,8 +1,9 @@
-# Yangi Lotin v1.6.2
+# Yangi Lotin v1.6.3 (sinov)
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 
-**Yuklab olish:** [eng so‘nggi Windows EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/latest).
+**Yuklab olish:** [v1.6.3 sinov EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.3).
+[Barqaror reliz](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/latest) alohida saqlanadi.
 
 Windows uchun oflayn o‘zbek yozuvi o‘girgichi: **kirill → yangi lotin**,
 **eski lotin → yangi lotin** hamda **eski yoki yangi lotin → kirill**.

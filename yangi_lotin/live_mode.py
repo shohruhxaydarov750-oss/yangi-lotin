@@ -16,6 +16,7 @@ from ctypes import wintypes
 from dataclasses import dataclass
 
 from .reverse import latin_to_cyrillic
+from .selection_probe import SelectionProbe, SelectionStatus
 from .transliterator import (
     is_live_source_character,
     modernize_old_latin,
@@ -343,6 +344,7 @@ class LiveKeyboardTransliterator:
         self._ready = threading.Event()
         self._startup_error: BaseException | None = None
         self._injecting = False
+        self._selection_probe = SelectionProbe()
 
     @property
     def enabled(self) -> bool:
@@ -403,6 +405,7 @@ class LiveKeyboardTransliterator:
         if self.running:
             return
 
+        self._selection_probe.start()
         self._ready.clear()
         self._startup_error = None
         self._thread = threading.Thread(
@@ -420,6 +423,7 @@ class LiveKeyboardTransliterator:
         self.set_enabled(False)
         thread = self._thread
         if not thread:
+            self._selection_probe.stop()
             return
         if self._thread_id:
             user32.PostThreadMessageW(self._thread_id, WM_QUIT, 0, 0)
@@ -429,6 +433,7 @@ class LiveKeyboardTransliterator:
         # yet. That prevents start() from creating a second global hook.
         if not thread.is_alive():
             self._thread = None
+        self._selection_probe.stop()
 
     def _reset_locked(self) -> None:
         self._composer.reset()
@@ -645,7 +650,18 @@ class LiveKeyboardTransliterator:
                             )
                         )
                     plan = self._composer.backspace()
-                    sent, expected = self._inject_edit(plan)
+                    selection = self._selection_for_edit(hwnd, plan)
+                    if selection in {
+                        SelectionStatus.UNAVAILABLE,
+                        SelectionStatus.OTHER_SELECTION,
+                    }:
+                        self._composer.reset()
+                        return int(user32.CallNextHookEx(
+                            self._keyboard_hook, n_code, w_param, l_param,
+                        ))
+                    sent, expected = self._inject_edit(
+                        plan, clear_selected_suffix=selection is SelectionStatus.SUFFIX,
+                    )
                     if sent == expected:
                         self._suppressed_keys.add(key_id)
                         return 1
@@ -703,15 +719,8 @@ class LiveKeyboardTransliterator:
                     )
 
                 plan = self._composer.feed(character)
-                # A leading s/c/o/g can be replaced by sh/ch/o'/g'. Send
-                # that first letter through the same input stream as its
-                # later replacement. Passing the physical first key through
-                # can let a browser process it after our injected Backspace.
-                pair_prefix = (
-                    self._old_latin_enabled
-                    and character.casefold() in {"s", "c", "o", "g"}
-                )
-                if plan == EditPlan(0, character) and not pair_prefix:
+                # Keep ordinary keys physical until the rendered text changes.
+                if plan == EditPlan(0, character):
                     return int(
                         user32.CallNextHookEx(
                             self._keyboard_hook,
@@ -720,7 +729,18 @@ class LiveKeyboardTransliterator:
                             l_param,
                         )
                     )
-                sent, expected = self._inject_edit(plan)
+                selection = self._selection_for_edit(hwnd, plan)
+                if selection in {
+                    SelectionStatus.UNAVAILABLE,
+                    SelectionStatus.OTHER_SELECTION,
+                }:
+                    self._composer.reset()
+                    return int(user32.CallNextHookEx(
+                        self._keyboard_hook, n_code, w_param, l_param,
+                    ))
+                sent, expected = self._inject_edit(
+                    plan, clear_selected_suffix=selection is SelectionStatus.SUFFIX,
+                )
                 if sent == expected:
                     self._suppressed_keys.add(key_id)
                     return 1
@@ -828,9 +848,27 @@ class LiveKeyboardTransliterator:
             ),
         )
 
-    def _inject_edit(self, plan: EditPlan) -> tuple[int, int]:
+    def _selection_for_edit(self, hwnd: int, plan: EditPlan) -> SelectionStatus:
+        if not plan.backspaces:
+            return SelectionStatus.CARET
+        class_name = ctypes.create_unicode_buffer(64)
+        if not user32.GetClassNameW(hwnd, class_name, len(class_name)):
+            return SelectionStatus.UNAVAILABLE
+        if not class_name.value.startswith("Chrome_WidgetWin"):
+            return SelectionStatus.CARET
+        status = self._selection_probe.query()
+        if int(user32.GetForegroundWindow() or 0) != hwnd:
+            return SelectionStatus.UNAVAILABLE
+        return status
+
+    def _inject_edit(
+        self, plan: EditPlan, clear_selected_suffix: bool = False,
+    ) -> tuple[int, int]:
         inputs: list[INPUT] = []
-        for _ in range(plan.backspaces):
+        # The first Backspace removes a browser-selected inline completion.
+        # Subsequent Backspaces replace only the rendered tail we own.
+        backspace_count = plan.backspaces + int(clear_selected_suffix)
+        for _ in range(backspace_count):
             inputs.append(self._keyboard_input(VK_BACK, 0, 0))
             inputs.append(self._keyboard_input(VK_BACK, 0, KEYEVENTF_KEYUP))
 

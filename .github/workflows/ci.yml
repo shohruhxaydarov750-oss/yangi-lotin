@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install app dependencies
+        run: python -m pip install --disable-pip-version-check -e .
       - name: Run transliteration and Windows integration tests
         run: python -m unittest discover -s tests -v
 

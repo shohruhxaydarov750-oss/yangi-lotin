@@ -1,10 +1,21 @@
 # O‘zgarishlar
 
+## 1.6.3 (sinov) — 2026-11-05
+
+- Chrome manzil satrida avtomatik taklif tanlanganida ilova tanlov
+  chegaralarini Windows UI Automation orqali tekshiradi. Tanlangan taklif
+  avval tozalanadi, keyin `sh/ch/o‘/g‘` birikmasi almashtiriladi.
+- Tanlovni aniqlash matnni o‘qimaydi. Tekshiruv kechiksa yoki qo‘llanmasa,
+  matn buzilmasligi uchun oddiy tugma kiritiladi. Backspace va bosh harf
+  holatlari sinovlarga qo‘shildi.
+- Chrome manzil satrida qo‘lda ishlashi tasdiqlanguncha bu reliz sinov
+  maqomida qoladi.
+
 ## 1.6.2 — 2026-11-03
 
 - Eski lotinda `sh/ch/o‘/g‘` yozishning birinchi harfi ham almashtirish bilan
-  bir xil klaviatura oqimidan yuboriladi; brauzer maydonida ortiqcha harf
-  qolishiga sabab bo‘lgan tartib tuzatildi.
+  bir xil klaviatura oqimidan yuborildi. Chrome manzil satridagi avtomatik
+  taklif muammosi bu versiyada saqlanib qoldi.
 - Oynadagi tushunarsiz **Qo‘lda manba** ro‘yxati o‘rniga natija yozuvi uchun
   **→ Yangi lotin** va **→ Kirill** tugmalari qo‘shildi.
 - Ctrl+V matnni chap maydonga qo‘yib darhol o‘giradi. Enter o‘giradi,

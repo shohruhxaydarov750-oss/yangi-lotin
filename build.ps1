@@ -39,6 +39,7 @@ try {
         "--onefile",
         "--windowed",
         "--name", "YangiLotin",
+        "--hidden-import", "comtypes.stream",
         "--icon", $iconFile,
         "--add-data", "$iconFile;packaging",
         "--version-file", $versionFile,
