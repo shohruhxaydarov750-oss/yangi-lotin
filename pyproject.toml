@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "uzbek-yangi-lotin"
-version = "1.6.3"
+version = "1.6.4"
 description = "Convert Uzbek Cyrillic and Latin scripts in both directions"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,7 +12,7 @@ license = { text = "MIT" }
 authors = [{ name = "shohruhxaydarov750-oss" }]
 keywords = ["uzbek", "cyrillic", "latin", "transliteration", "keyboard", "tkinter"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "License :: OSI Approved :: MIT License",
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python :: 3",

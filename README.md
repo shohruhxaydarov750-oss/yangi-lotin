@@ -1,8 +1,8 @@
-# Yangi Lotin v1.6.3 (sinov)
+# Yangi Lotin v1.6.4 (sinov)
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 
-**Yuklab olish:** [v1.6.3 sinov EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.3).
+**Yuklab olish:** [v1.6.4 sinov EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.4).
 [Barqaror reliz](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/latest) alohida saqlanadi.
 
 Windows uchun oflayn o‘zbek yozuvi o‘girgichi: **kirill → yangi lotin**,
@@ -46,7 +46,7 @@ Lotin → kirill rejimi eski va yangi shakllarni qabul qiladi:
 Bu to‘rtta harf endi shunchaki loyiha emas. O‘zbekiston Respublikasining
 2026-yil 21-oktabrdagi **O‘RQ-1184-son Qonuni** yangilangan, 28 harf va
 1 tutuq belgili alifboni belgiladi. Qonun 2027-yil 22-apreldan kuchga
-kiradi. Demak, 2026-yil 2-noyabr holatiga u qabul qilingan, ammo hali
+kiradi. Demak, 2026-yil 9-noyabr holatiga u qabul qilingan, ammo hali
 kuchga kirmagan.
 
 Rasmiy manbalar:
@@ -174,11 +174,14 @@ buning uchun shu oynadan foydalaning.
 Talab: Windows va Tkinter bilan Python 3.10 yoki yangiroq.
 
 ~~~powershell
-py -3 app.py
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\python.exe app.py
 ~~~
 
-Hech qanday runtime kutubxonasi o‘rnatilmaydi: dastur faqat Python standart
-kutubxonasidan foydalanadi. Manba kodidan avtomatik boshlash yoqilsa,
+Manba kodidan ishlatganda Windows matn tanlovini tekshirish uchun
+`comtypes` kutubxonasi o‘rnatiladi. Portativ EXE barcha kerakli qismlarni
+o‘z ichiga oladi. Manba kodidan avtomatik boshlash yoqilsa,
 Windows `pythonw.exe` va `app.py` manzillarini saqlaydi; bu fayllarni
 ko‘chirgandan keyin avtomatik boshlashni qayta yoqing.
 

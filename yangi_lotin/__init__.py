@@ -24,4 +24,4 @@ __all__ = [
     "to_new_latin",
     "transliterate",
 ]
-__version__ = "1.6.3"
+__version__ = "1.6.4"

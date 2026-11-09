@@ -230,13 +230,16 @@ class ModeAndCaseTests(unittest.TestCase):
         import yangi_lotin.live_mode as live_mode
 
         class EditingTarget:
-            """Model Backspace consuming a selected completion before typed text."""
+            """Model Chromium's backwards selection over an inline completion."""
 
             def __init__(self, text: str, anchor: int, caret: int) -> None:
                 self.text = text
                 self.anchor = anchor
                 self.caret = caret
                 self.backspace_count = 0
+                self.left_count = 0
+                self.shift_events = 0
+                self.shift_down = False
 
             def replace_selection(self, replacement: str) -> None:
                 start, end = sorted((self.anchor, self.caret))
@@ -251,6 +254,17 @@ class ModeAndCaseTests(unittest.TestCase):
                     if flags & live_mode.KEYEVENTF_UNICODE:
                         if not released:
                             self.replace_selection(chr(key.wScan))
+                    elif key.wVk == live_mode.VK_SHIFT:
+                        self.shift_events += 1
+                        self.shift_down = not released
+                    elif key.wVk == live_mode.VK_LEFT and not released:
+                        self.left_count += 1
+                        if self.shift_down:
+                            self.caret = max(0, self.caret - 1)
+                        else:
+                            self.anchor = self.caret = max(
+                                0, min(self.anchor, self.caret) - int(self.anchor == self.caret)
+                            )
                     elif key.wVk == live_mode.VK_BACK and not released:
                         self.backspace_count += 1
                         if self.anchor != self.caret:
@@ -261,25 +275,53 @@ class ModeAndCaseTests(unittest.TestCase):
                 return count
 
         cases = (
-            ("normal", "as", 2, 2, EditPlan(1, "ş"), "aş", False, 1),
-            ("omnibox", "asuggest", 8, 2, EditPlan(1, "ş"), "aş", True, 2),
-            ("delete", "as", 2, 2, EditPlan(1, ""), "a", False, 1),
-            ("delete suggestion", "asuggest", 8, 2, EditPlan(1, ""), "a", True, 2),
-            ("two-character tail", "YO", 2, 2, EditPlan(2, "Yo"), "Yo", False, 2),
-            ("capital", "Ssuggest", 8, 1, EditPlan(1, "Ş"), "Ş", True, 2),
+            ("normal", "as", 2, 2, EditPlan(1, "ş"), "aş", False, 1, 0),
+            ("omnibox", "asuggest", 8, 2, EditPlan(1, "ş"), "aş", True, 0, 1),
+            ("delete", "as", 2, 2, EditPlan(1, ""), "a", False, 1, 0),
+            ("delete suggestion", "asuggest", 8, 2, EditPlan(1, ""), "a", True, 1, 1),
+            ("two-character tail", "YO", 2, 2, EditPlan(2, "Yo"), "Yo", False, 2, 0),
+            ("capital", "Ssuggest", 8, 1, EditPlan(1, "Ş"), "Ş", True, 0, 1),
+            ("longer tail", "YOwhatever", 10, 2, EditPlan(2, "Yo"), "Yo", True, 0, 2),
         )
-        for label, text, anchor, caret, plan, expected, suffix, backspaces in cases:
+        for label, text, anchor, caret, plan, expected, suffix, backspaces, lefts in cases:
             with self.subTest(label=label):
                 service = LiveKeyboardTransliterator(enabled=False)
                 target = EditingTarget(text, anchor, caret)
                 with patch.object(live_mode, "user32", target):
                     sent, expected_events = service._inject_edit(
-                        plan, clear_selected_suffix=suffix,
+                        plan, selected_suffix=suffix,
                     )
                 self.assertEqual(sent, expected_events)
                 self.assertEqual(target.text, expected)
                 self.assertEqual(target.backspace_count, backspaces)
+                self.assertEqual(target.left_count, lefts)
+                self.assertEqual(target.shift_events, 2 if suffix else 0)
                 self.assertFalse(service._injecting)
+
+    @unittest.skipUnless(os.name == "nt", "Windows keyboard injection")
+    def test_selected_suffix_does_not_release_a_physical_shift(self) -> None:
+        from unittest.mock import patch
+
+        import yangi_lotin.live_mode as live_mode
+
+        events = []
+
+        class EditingTarget:
+            def SendInput(self, count, inputs, _size):
+                events.extend(
+                    (int(inputs[index].ki.wVk), int(inputs[index].ki.dwFlags))
+                    for index in range(count)
+                )
+                return count
+
+        service = LiveKeyboardTransliterator(enabled=False)
+        with patch.object(live_mode, "user32", EditingTarget()):
+            sent, expected = service._inject_edit(
+                EditPlan(1, "Ş"), selected_suffix=True, shift_already_down=True,
+            )
+        self.assertEqual(sent, expected)
+        self.assertFalse(any(vk == live_mode.VK_SHIFT for vk, _flags in events))
+        self.assertEqual(sum(vk == live_mode.VK_LEFT for vk, _flags in events), 2)
 
     @unittest.skipUnless(os.name == "nt", "Windows keyboard packet")
     def test_unicode_packet_decodes_special_latin_character(self) -> None:

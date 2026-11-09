@@ -1,5 +1,17 @@
 # O‘zgarishlar
 
+## 1.6.4 (sinov) — 2026-11-09
+
+- Chrome manzil satrida tanlangan avtomatik taklifga duch kelganda,
+  `sh/ch/o‘/g‘` uchun eski harf va taklif bitta tanlovga birlashtirilib,
+  yangi harf bilan almashtiriladi. Ketma-ket Backspace yuborish olib tashlandi.
+- Xuddi shu usul bir marta Backspace bilan yozilgan harfni o‘chirish va
+  bosh harflarni saqlash uchun ham qo‘llanadi.
+- Manba kodidan ishga tushirish yo‘riqnomasiga `comtypes` o‘rnatilishi
+  qo‘shildi; EXE ichida u allaqachon mavjud.
+- Chrome manzil satridagi amaliy natija bevosita tasdiqlanmaguncha bu reliz
+  sinov maqomida qoladi.
+
 ## 1.6.3 (sinov) — 2026-11-05
 
 - Chrome manzil satrida avtomatik taklif tanlanganida ilova tanlov

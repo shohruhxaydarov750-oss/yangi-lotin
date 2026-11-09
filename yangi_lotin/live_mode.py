@@ -139,6 +139,7 @@ if WINDOWS:
     WM_MOUSEHWHEEL = 0x020E
 
     VK_BACK = 0x08
+    VK_LEFT = 0x25
     VK_SHIFT = 0x10
     VK_LSHIFT = 0xA0
     VK_RSHIFT = 0xA1
@@ -660,7 +661,9 @@ class LiveKeyboardTransliterator:
                             self._keyboard_hook, n_code, w_param, l_param,
                         ))
                     sent, expected = self._inject_edit(
-                        plan, clear_selected_suffix=selection is SelectionStatus.SUFFIX,
+                        plan,
+                        selected_suffix=selection is SelectionStatus.SUFFIX,
+                        shift_already_down=self._shift_down(),
                     )
                     if sent == expected:
                         self._suppressed_keys.add(key_id)
@@ -739,7 +742,9 @@ class LiveKeyboardTransliterator:
                         self._keyboard_hook, n_code, w_param, l_param,
                     ))
                 sent, expected = self._inject_edit(
-                    plan, clear_selected_suffix=selection is SelectionStatus.SUFFIX,
+                    plan,
+                    selected_suffix=selection is SelectionStatus.SUFFIX,
+                    shift_already_down=self._shift_down(),
                 )
                 if sent == expected:
                     self._suppressed_keys.add(key_id)
@@ -772,6 +777,11 @@ class LiveKeyboardTransliterator:
         return any(
             user32.GetAsyncKeyState(vk_code) & 0x8000
             for vk_code in (VK_CONTROL, VK_MENU, VK_LWIN, VK_RWIN)
+        )
+
+    def _shift_down(self) -> bool:
+        return self._case_tracker.shift_down or bool(
+            user32.GetAsyncKeyState(VK_SHIFT) & 0x8000
         )
 
     @staticmethod
@@ -862,15 +872,33 @@ class LiveKeyboardTransliterator:
         return status
 
     def _inject_edit(
-        self, plan: EditPlan, clear_selected_suffix: bool = False,
+        self,
+        plan: EditPlan,
+        selected_suffix: bool = False,
+        shift_already_down: bool = False,
     ) -> tuple[int, int]:
         inputs: list[INPUT] = []
-        # The first Backspace removes a browser-selected inline completion.
-        # Subsequent Backspaces replace only the rendered tail we own.
-        backspace_count = plan.backspaces + int(clear_selected_suffix)
-        for _ in range(backspace_count):
-            inputs.append(self._keyboard_input(VK_BACK, 0, 0))
-            inputs.append(self._keyboard_input(VK_BACK, 0, KEYEVENTF_KEYUP))
+        if selected_suffix and plan.backspaces:
+            # Chromium selects its suggested suffix backwards: the anchor is
+            # at the end, while the caret sits after the text just typed.
+            # Shift+Left extends that selection over our rendered tail. One
+            # insertion then replaces both the tail and the suggestion.
+            # Repeated Backspaces are unsafe here: the first one can merely
+            # dismiss a suggestion and leave the preceding letter in place.
+            if not shift_already_down:
+                inputs.append(self._keyboard_input(VK_SHIFT, 0, 0))
+            for _ in range(plan.backspaces):
+                inputs.append(self._keyboard_input(VK_LEFT, 0, 0))
+                inputs.append(self._keyboard_input(VK_LEFT, 0, KEYEVENTF_KEYUP))
+            if not shift_already_down:
+                inputs.append(self._keyboard_input(VK_SHIFT, 0, KEYEVENTF_KEYUP))
+            if not plan.insert:
+                inputs.append(self._keyboard_input(VK_BACK, 0, 0))
+                inputs.append(self._keyboard_input(VK_BACK, 0, KEYEVENTF_KEYUP))
+        else:
+            for _ in range(plan.backspaces):
+                inputs.append(self._keyboard_input(VK_BACK, 0, 0))
+                inputs.append(self._keyboard_input(VK_BACK, 0, KEYEVENTF_KEYUP))
 
         utf16 = plan.insert.encode("utf-16-le", errors="surrogatepass")
         for offset in range(0, len(utf16), 2):
