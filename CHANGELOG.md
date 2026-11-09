@@ -1,5 +1,15 @@
 # O‘zgarishlar
 
+## 1.6.5 — 2026-11-10
+
+- `sh → ş`, `ch → ç`, `o' → ö`, `g' → ğ` yozilgandan keyin bitta Backspace
+  juftlikdan hosil bo‘lgan harfni to‘liq o‘chiradi. Oldingi birinchi harf
+  qayta paydo bo‘lmaydi.
+- Lotin → kirill rejimidagi `sh → ш`, `ch → ч`, `yo → ё` juftliklari ham
+  bir marta Backspace bilan o‘chadi.
+- Chrome manzil satrida `sş` chiqishi tuzalganini foydalanuvchi tasdiqladi;
+  ko‘rinadigan matn va ichki yozish holati uchun yangi sinovlar qo‘shildi.
+
 ## 1.6.4 (sinov) — 2026-11-09
 
 - Chrome manzil satrida tanlangan avtomatik taklifga duch kelganda,

@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 6, 4, 0),
-    prodvers=(1, 6, 4, 0),
+    filevers=(1, 6, 5, 0),
+    prodvers=(1, 6, 5, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -17,12 +17,12 @@ VSVersionInfo(
           [
             StringStruct("CompanyName", "shohruhxaydarov750-oss"),
             StringStruct("FileDescription", "Uzbek Cyrillic and Latin converter"),
-            StringStruct("FileVersion", "1.6.4"),
+            StringStruct("FileVersion", "1.6.5"),
             StringStruct("InternalName", "YangiLotin"),
             StringStruct("LegalCopyright", "MIT License"),
             StringStruct("OriginalFilename", "YangiLotin.exe"),
             StringStruct("ProductName", "Yangi Lotin - Uzbek script converter"),
-            StringStruct("ProductVersion", "1.6.4")
+            StringStruct("ProductVersion", "1.6.5")
           ]
         )
       ]

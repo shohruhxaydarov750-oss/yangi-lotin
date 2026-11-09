@@ -1,9 +1,8 @@
-# Yangi Lotin v1.6.4 (sinov)
+# Yangi Lotin v1.6.5
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 
-**Yuklab olish:** [v1.6.4 sinov EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.4).
-[Barqaror reliz](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/latest) alohida saqlanadi.
+**Yuklab olish:** [v1.6.5 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.5).
 
 Windows uchun oflayn o‘zbek yozuvi o‘girgichi: **kirill → yangi lotin**,
 **eski lotin → yangi lotin** hamda **eski yoki yangi lotin → kirill**.
@@ -46,7 +45,7 @@ Lotin → kirill rejimi eski va yangi shakllarni qabul qiladi:
 Bu to‘rtta harf endi shunchaki loyiha emas. O‘zbekiston Respublikasining
 2026-yil 21-oktabrdagi **O‘RQ-1184-son Qonuni** yangilangan, 28 harf va
 1 tutuq belgili alifboni belgiladi. Qonun 2027-yil 22-apreldan kuchga
-kiradi. Demak, 2026-yil 9-noyabr holatiga u qabul qilingan, ammo hali
+kiradi. Demak, 2026-yil 10-noyabr holatiga u qabul qilingan, ammo hali
 kuchga kirmagan.
 
 Rasmiy manbalar:
@@ -113,6 +112,8 @@ etadi. To‘liq yopish uchun tray menyusidagi **Çiqiş** buyrug‘ini tanlang.
 
 Kichik harf kichikligicha qoladi: `sh → ş`, `ch → ç`, `ш → ş`, `ч → ç`.
 Shift va Caps Lock bilan kiritilgan bosh harflar ham saqlanadi.
+`sh → ş`, `ch → ç`, `o' → ö`, `g' → ğ` kabi bitta harfga aylangan
+juftliklar bir marta Backspace bosilganda to‘liq o‘chadi.
 
 EXE portativ: o‘rnatish va alohida Python talab qilmaydi. U Windows 10/11
 x64 uchun yig‘ilgan. Dastur matnni internetga yubormaydi.

@@ -134,11 +134,11 @@ class LatinToCyrillicTests(unittest.TestCase):
                     visible = visible[:-edit.backspaces] if edit.backspaces else visible
                     visible += edit.insert
                     self.assertEqual(visible, latin_to_cyrillic(word[:index]))
-                for remaining in range(len(word) - 1, -1, -1):
+                while composer.has_token:
                     edit = composer.backspace()
                     visible = visible[:-edit.backspaces] if edit.backspaces else visible
                     visible += edit.insert
-                    self.assertEqual(visible, latin_to_cyrillic(word[:remaining]))
+                    self.assertEqual(visible, latin_to_cyrillic(composer.source_token))
 
     def test_non_string_rejected(self) -> None:
         with self.assertRaises(TypeError):

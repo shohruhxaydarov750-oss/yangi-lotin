@@ -80,8 +80,23 @@ class LiveComposer:
             return EditPlan(0, "")
 
         previous = self.rendered_token
-        self.source_token = self.source_token[:-1]
-        self.rendered_token = self._renderer(self.source_token)
+        # One Backspace should remove one visible letter. A source pair such
+        # as ``sh`` renders as the single letter ``ş``; removing only ``h``
+        # would change it back to ``s`` and require a second Backspace.
+        # Find the longest source prefix that renders exactly as the visible
+        # text with its last character removed. If context changes an earlier
+        # fragment (for example ЁШ -> Yoş), fall back to one source character.
+        wanted = previous[:-1]
+        for length in range(len(self.source_token) - 1, -1, -1):
+            candidate = self.source_token[:length]
+            rendered = self._renderer(candidate)
+            if rendered == wanted:
+                self.source_token = candidate
+                self.rendered_token = rendered
+                break
+        else:
+            self.source_token = self.source_token[:-1]
+            self.rendered_token = self._renderer(self.source_token)
         return self._edit_between(previous, self.rendered_token)
 
     def reset(self) -> None:

@@ -61,16 +61,18 @@ class LiveComposerTests(unittest.TestCase):
                     visible = apply_edit(visible, composer.feed(character))
                     self.assertEqual(visible, transliterate(word[:index]))
 
-    def test_backspace_removes_one_source_character(self) -> None:
+    def test_backspace_keeps_source_and_visible_text_in_sync(self) -> None:
         for word in self.WORDS:
             with self.subTest(word=word):
                 composer = LiveComposer()
                 visible = ""
                 for character in word:
                     visible = apply_edit(visible, composer.feed(character))
-                for remaining in range(len(word) - 1, -1, -1):
+                while composer.has_token:
+                    before = len(composer.source_token)
                     visible = apply_edit(visible, composer.backspace())
-                    self.assertEqual(visible, transliterate(word[:remaining]))
+                    self.assertLess(len(composer.source_token), before)
+                    self.assertEqual(visible, transliterate(composer.source_token))
                 self.assertFalse(composer.has_token)
 
     def test_future_context_rewrites_only_changed_tail(self) -> None:
@@ -109,9 +111,9 @@ class LiveComposerTests(unittest.TestCase):
             for index, character in enumerate(source, start=1):
                 visible = apply_edit(visible, composer.feed(character))
                 self.assertEqual(visible, transliterate(source[:index]))
-            for remaining in range(length - 1, -1, -1):
+            while composer.has_token:
                 visible = apply_edit(visible, composer.backspace())
-                self.assertEqual(visible, transliterate(source[:remaining]))
+                self.assertEqual(visible, transliterate(composer.source_token))
 
 
 class OldLatinLiveComposerTests(unittest.TestCase):
@@ -140,20 +142,47 @@ class OldLatinLiveComposerTests(unittest.TestCase):
                 for index, character in enumerate(word, start=1):
                     visible = apply_edit(visible, composer.feed(character))
                     self.assertEqual(visible, to_new_latin(word[:index]))
-                for remaining in range(len(word) - 1, -1, -1):
+                while composer.has_token:
                     visible = apply_edit(visible, composer.backspace())
-                    self.assertEqual(visible, to_new_latin(word[:remaining]))
+                    self.assertEqual(visible, to_new_latin(composer.source_token))
 
     def test_completed_pairs_rewrite_the_visible_tail(self) -> None:
         composer = self.make_composer()
         self.assertEqual(composer.feed("s"), EditPlan(0, "s"))
         self.assertEqual(composer.feed("h"), EditPlan(1, "ş"))
-        self.assertEqual(composer.backspace(), EditPlan(1, "s"))
+        self.assertEqual(composer.backspace(), EditPlan(1, ""))
+        self.assertFalse(composer.has_token)
 
         composer.reset()
         self.assertEqual(composer.feed("g"), EditPlan(0, "g"))
         self.assertEqual(composer.feed("'"), EditPlan(1, "ğ"))
-        self.assertEqual(composer.backspace(), EditPlan(1, "g"))
+        self.assertEqual(composer.backspace(), EditPlan(1, ""))
+        self.assertFalse(composer.has_token)
+
+    def test_one_backspace_removes_each_single_letter_pair(self) -> None:
+        for source, expected in (
+            ("sh", "ş"), ("ch", "ç"), ("o'", "ö"), ("g'", "ğ"),
+            ("SH", "Ş"), ("Ch", "Ç"), ("O‘", "Ö"), ("Gʻ", "Ğ"),
+        ):
+            with self.subTest(source=source):
+                composer = LiveComposer(renderer=modernize_old_latin)
+                visible = ""
+                for character in source:
+                    visible = apply_edit(visible, composer.feed(character))
+                self.assertEqual(visible, expected)
+                visible = apply_edit(visible, composer.backspace())
+                self.assertEqual(visible, "")
+                self.assertFalse(composer.has_token)
+
+    def test_pair_at_end_of_word_is_removed_without_revealing_first_key(self) -> None:
+        composer = LiveComposer(renderer=modernize_old_latin)
+        visible = ""
+        for character in "qo'sh":
+            visible = apply_edit(visible, composer.feed(character))
+        self.assertEqual(visible, "qöş")
+        visible = apply_edit(visible, composer.backspace())
+        self.assertEqual(visible, "qö")
+        self.assertEqual(composer.source_token, "qo'")
 
     def test_lowercase_pairs_stay_lowercase_in_each_render_mode(self) -> None:
         for source, expected in (
@@ -177,9 +206,9 @@ class OldLatinLiveComposerTests(unittest.TestCase):
             for index, character in enumerate(source, start=1):
                 visible = apply_edit(visible, composer.feed(character))
                 self.assertEqual(visible, to_new_latin(source[:index]))
-            for remaining in range(length - 1, -1, -1):
+            while composer.has_token:
                 visible = apply_edit(visible, composer.backspace())
-                self.assertEqual(visible, to_new_latin(source[:remaining]))
+                self.assertEqual(visible, to_new_latin(composer.source_token))
 
 
 class ModeAndCaseTests(unittest.TestCase):
@@ -383,9 +412,20 @@ class ReverseLiveComposerTests(unittest.TestCase):
                 for index, character in enumerate(word, start=1):
                     visible = apply_edit(visible, composer.feed(character))
                     self.assertEqual(visible, latin_to_cyrillic(word[:index]))
-                for remaining in range(len(word) - 1, -1, -1):
+                while composer.has_token:
                     visible = apply_edit(visible, composer.backspace())
-                    self.assertEqual(visible, latin_to_cyrillic(word[:remaining]))
+                    self.assertEqual(visible, latin_to_cyrillic(composer.source_token))
+
+    def test_reverse_digraph_is_one_backspace(self) -> None:
+        for source, expected in (("sh", "ш"), ("ch", "ч"), ("yo", "ё")):
+            with self.subTest(source=source):
+                composer = LiveComposer(renderer=latin_to_cyrillic)
+                visible = ""
+                for character in source:
+                    visible = apply_edit(visible, composer.feed(character))
+                self.assertEqual(visible, expected)
+                self.assertEqual(apply_edit(visible, composer.backspace()), "")
+                self.assertFalse(composer.has_token)
 
 
 if __name__ == "__main__":
