@@ -243,10 +243,10 @@ class YangiLotinImeService : InputMethodService() {
         keyRows?.addView(row)
         row.addView(key(if (symbols) "ABC" else "?123", 1.25f, quiet = true, height = 52) {
             symbols = !symbols
-            composer.reset()
             renderKeyboard()
         })
         row.addView(key(",", 0.65f, height = 52) { insertLiteral(",") })
+        row.addView(key("ʼ", 0.65f, height = 52) { insertCharacter('ʼ') })
         row.addView(key("🌐", 0.9f, quiet = true, height = 52) {
             if (shouldOfferSwitchingToNextInputMethod()) switchToNextInputMethod(false)
             else (getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)

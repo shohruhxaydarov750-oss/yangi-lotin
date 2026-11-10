@@ -15,6 +15,8 @@ ilovadagi joriy matn maydoniga `InputConnection` orqali yozadi.
 - Maxfiy parol maydonida o‘girish avtomatik to‘xtaydi.
 - Asosiy oynada matnni qo‘yish, o‘girish, nusxalash va tozalash.
 - Internet ruxsati so‘ralmaydi; tugma bosishlari saqlanmaydi.
+- Apostrof klaviaturada bevosita bor; belgilarga o‘tib qaytganda
+  tugallanmagan so‘z konteksti saqlanadi (`o' → ö`, `g' → ğ`).
 
 ## Ishga tushirish
 
@@ -32,8 +34,9 @@ gradlew.bat testDebugUnitTest assembleDebug
 macOS/Linux uchun shu buyruq `./gradlew testDebugUnitTest assembleDebug`.
 
 APK `app/build/outputs/apk/debug/app-debug.apk` manzilida chiqadi.
-GitHub Actions shu ikki tekshiruvni bajarib, sinov APK’sini artifact sifatida
-saqlaydi. Bu **debug** APK umumiy tarqatish uchun imzolangan reliz emas.
+GitHub Actions qoidalar sinovi, APK yig‘ish va Android emulyatorida haqiqiy
+tugmalarni bosib ko‘rish tekshiruvini bajaradi. Sinov APK’si artifact sifatida
+saqlanadi. Bu **debug** APK umumiy tarqatish uchun imzolangan reliz emas.
 
 ## Sinov chegarasi
 
