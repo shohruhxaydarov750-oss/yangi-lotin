@@ -27,7 +27,7 @@ def adb(*args: str) -> str:
 
 
 def tree() -> ET.Element:
-    adb("shell", "uiautomator", "dump", "/sdcard/window.xml")
+    adb("shell", "uiautomator", "dump", "--windows", "/sdcard/window.xml")
     return ET.fromstring(adb("shell", "cat", "/sdcard/window.xml"))
 
 

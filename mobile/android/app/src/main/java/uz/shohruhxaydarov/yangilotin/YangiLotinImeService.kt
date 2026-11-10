@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.inputmethodservice.InputMethodService
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
@@ -14,6 +15,7 @@ import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.HorizontalScrollView
@@ -61,6 +63,20 @@ class YangiLotinImeService : InputMethodService() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(3), dp(4), dp(3), dp(6))
             setBackgroundColor(keyboardBackground)
+            setOnApplyWindowInsetsListener { view, insets ->
+                val navigation = if (Build.VERSION.SDK_INT >= 30) {
+                    maxOf(
+                        insets.getInsets(WindowInsets.Type.navigationBars()).bottom,
+                        insets.getInsets(WindowInsets.Type.tappableElement()).bottom
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    val legacyBottom = insets.systemWindowInsetBottom
+                    legacyBottom
+                }
+                view.setPadding(dp(3), dp(4), dp(3), dp(6) + navigation)
+                insets
+            }
         }
         root = keyboard
         status = TextView(this).apply {
