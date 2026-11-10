@@ -46,9 +46,9 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
-          target: google_apis
+          target: default
           arch: x86_64
-          profile: pixel_6
+          profile: pixel_4
           script: python3 mobile/android/scripts/smoke_ime.py mobile/android/app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v7
         if: failure()

@@ -87,7 +87,7 @@ def main(apk: Path) -> None:
     print(adb("install", "-r", str(apk.resolve())), flush=True)
     available = ""
     for _ in range(12):
-        available = adb("shell", "ime", "list", "-s")
+        available = adb("shell", "ime", "list", "-a", "-s")
         matches = [line.strip() for line in available.splitlines() if PACKAGE in line]
         if matches:
             break
