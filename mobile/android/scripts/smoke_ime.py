@@ -125,8 +125,8 @@ def main(apk: Path) -> None:
     tap("g")
     tap("?123")
     tap("'")
-    assert_text("ğ")
     tap("ABC")
+    assert_text("ğ")
     erase_one()
 
     tap("⇧")

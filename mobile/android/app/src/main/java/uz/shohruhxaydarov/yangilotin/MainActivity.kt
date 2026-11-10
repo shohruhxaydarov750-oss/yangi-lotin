@@ -56,7 +56,18 @@ class MainActivity : Activity() {
         if (Build.VERSION.SDK_INT >= 30) {
             page.setOnApplyWindowInsetsListener { view, insets ->
                 val bars = insets.getInsets(WindowInsets.Type.systemBars())
-                view.setPadding(dp(18), dp(18) + bars.top, dp(18), dp(28) + bars.bottom)
+                val keyboard = insets.getInsets(WindowInsets.Type.ime()).bottom
+                view.setPadding(dp(18), dp(18) + bars.top, dp(18),
+                    dp(28) + maxOf(bars.bottom, keyboard))
+                if (::input.isInitialized && input.hasFocus() && keyboard > 0) {
+                    view.post {
+                        val position = IntArray(2)
+                        input.getLocationOnScreen(position)
+                        val visibleBottom = resources.displayMetrics.heightPixels - keyboard
+                        val overflow = position[1] + input.height - visibleBottom + dp(12)
+                        if (overflow > 0) outer.smoothScrollBy(0, overflow)
+                    }
+                }
                 insets
             }
         } else {
