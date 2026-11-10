@@ -15,4 +15,9 @@ release/
 .env.*
 .idea/
 .vscode/
+.gradle/
+.kotlin/
+local.properties
+*.apk
+*.aab
 Thumbs.db
