@@ -42,7 +42,7 @@ class YangiLotinImeService : InputMethodService() {
     private val dark: Boolean
         get() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
             Configuration.UI_MODE_NIGHT_YES
-    private val background: Int get() = Color.parseColor(if (dark) "#202633" else "#E8EDF6")
+    private val keyboardBackground: Int get() = Color.parseColor(if (dark) "#202633" else "#E8EDF6")
     private val keyBackground: Int get() = Color.parseColor(if (dark) "#364153" else "#FFFFFF")
     private val keyForeground: Int get() = Color.parseColor(if (dark) "#F7FAFF" else "#172033")
     private val mutedBackground: Int get() = Color.parseColor(if (dark) "#2C3545" else "#D7DFEC")
@@ -60,7 +60,7 @@ class YangiLotinImeService : InputMethodService() {
         val keyboard = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(3), dp(4), dp(3), dp(6))
-            setBackgroundColor(background)
+            setBackgroundColor(keyboardBackground)
         }
         root = keyboard
         status = TextView(this).apply {
@@ -336,7 +336,11 @@ class YangiLotinImeService : InputMethodService() {
 
     private fun backspace() {
         val connection = currentInputConnection ?: return
-        if (!connection.getSelectedText(0).isNullOrEmpty()) composer.reset()
+        if (!connection.getSelectedText(0).isNullOrEmpty()) {
+            composer.reset()
+            connection.commitText("", 1)
+            return
+        }
         if (composer.hasToken && !renderedSuffixMatches()) composer.reset()
         if (composer.hasToken) {
             val edit = composer.backspace()

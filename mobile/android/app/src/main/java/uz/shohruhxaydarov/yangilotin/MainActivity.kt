@@ -45,7 +45,7 @@ class MainActivity : Activity() {
             View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 
         val outer = ScrollView(this).apply {
-            fillViewport = true
+            isFillViewport = true
             setBackgroundColor(paper)
         }
         val page = LinearLayout(this).apply {

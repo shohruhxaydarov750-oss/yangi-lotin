@@ -23,11 +23,13 @@ JDK 17 va Android 16 (API 36) SDK talab qilinadi. `app` modulini telefon yoki
 emulyatorga o‘rnating. Ilovani ochib **Sozlamalarda yoqish**, so‘ng
 **Klaviaturani tanlash** bosqichlarini bajaring.
 
-Buyruq satrida Gradle 8.13 o‘rnatilgan bo‘lsa:
+Buyruq satrida loyiha ichidan (Gradle Wrapper kerakli versiyani o‘zi yuklaydi):
 
 ```text
-gradle testDebugUnitTest assembleDebug
+gradlew.bat testDebugUnitTest assembleDebug
 ```
+
+macOS/Linux uchun shu buyruq `./gradlew testDebugUnitTest assembleDebug`.
 
 APK `app/build/outputs/apk/debug/app-debug.apk` manzilida chiqadi.
 GitHub Actions shu ikki tekshiruvni bajarib, sinov APK’sini artifact sifatida

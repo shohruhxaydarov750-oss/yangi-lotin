@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
         android:label="Yangi Lotin"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
