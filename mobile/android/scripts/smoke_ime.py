@@ -85,6 +85,7 @@ def erase_one() -> None:
 
 def main(apk: Path) -> None:
     print(adb("install", "-r", str(apk.resolve())), flush=True)
+    adb("shell", "settings", "put", "secure", "show_ime_with_hard_keyboard", "1")
     available = ""
     for _ in range(12):
         available = adb("shell", "ime", "list", "-a", "-s")
@@ -100,7 +101,10 @@ def main(apk: Path) -> None:
     print(adb("shell", "ime", "set", ime_id), flush=True)
     adb("shell", "am", "start", "-n", ACTIVITY)
     time.sleep(2)
-    tap_node(input_node())
+    field = input_node()
+    print(f"Input field bounds: {field.get('bounds')}", flush=True)
+    tap_node(field)
+    print(f"Input focused: {input_node().get('focused')}", flush=True)
     find_button("ESKI→Y")
 
     tap("s")
