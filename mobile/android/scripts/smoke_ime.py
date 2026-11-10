@@ -17,9 +17,13 @@ HINT = "Matn yozing yoki qo‘ying…"
 
 
 def adb(*args: str) -> str:
-    return subprocess.run(
-        ["adb", *args], check=True, capture_output=True, text=True
-    ).stdout.strip()
+    result = subprocess.run(["adb", *args], capture_output=True, text=True)
+    if result.returncode:
+        raise RuntimeError(
+            f"adb {' '.join(args)} failed ({result.returncode}): "
+            f"{result.stdout.strip()} {result.stderr.strip()}"
+        )
+    return result.stdout.strip()
 
 
 def tree() -> ET.Element:
@@ -80,9 +84,20 @@ def erase_one() -> None:
 
 
 def main(apk: Path) -> None:
-    adb("install", "-r", str(apk.resolve()))
-    adb("shell", "ime", "enable", IME)
-    adb("shell", "ime", "set", IME)
+    print(adb("install", "-r", str(apk.resolve())), flush=True)
+    available = ""
+    for _ in range(12):
+        available = adb("shell", "ime", "list", "-s")
+        matches = [line.strip() for line in available.splitlines() if PACKAGE in line]
+        if matches:
+            break
+        time.sleep(1)
+    else:
+        raise AssertionError(f"IME not registered after install; available: {available!r}")
+    ime_id = matches[0]
+    print(f"Enabling {ime_id}", flush=True)
+    print(adb("shell", "ime", "enable", ime_id), flush=True)
+    print(adb("shell", "ime", "set", ime_id), flush=True)
     adb("shell", "am", "start", "-n", ACTIVITY)
     time.sleep(2)
     tap_node(input_node())
@@ -145,6 +160,9 @@ if __name__ == "__main__":
                 (n.get("class"), n.get("text")) for n in nodes()
                 if n.get("text")
             ], flush=True)
+        except Exception as inspection_error:
+            print(f"Could not inspect emulator UI: {inspection_error}")
+        try:
             with open("mobile/android/keyboard-smoke.png", "wb") as screenshot:
                 subprocess.run(["adb", "exec-out", "screencap", "-p"],
                                check=True, stdout=screenshot)
