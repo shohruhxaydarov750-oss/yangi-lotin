@@ -180,7 +180,7 @@ class YangiLotinImeService : InputMethodService() {
         if (symbols) {
             addCharacterRow("1234567890")
             addCharacterRow("@#%&-+()/")
-            addCharacterRow("*\"':;!?")
+            addCharacterRow("*\"':;!?", lastLetters = true)
         } else if (cyrillicLayout) {
             addCharacterRow("қғҳёъэщ")
             addCharacterRow("йцукенгшўзх")
@@ -197,7 +197,8 @@ class YangiLotinImeService : InputMethodService() {
     private fun addCharacterRow(characters: String, lastLetters: Boolean = false) {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         keyRows?.addView(row)
-        if (lastLetters) row.addView(key("⇧", 1.45f, quiet = true) { toggleShift() })
+        if (lastLetters && !symbols)
+            row.addView(key("⇧", 1.45f, quiet = true) { toggleShift() })
         for (base in characters) {
             val button = key(letterLabel(base)) { insertCharacter(letterValue(base)) }
             row.addView(button)
@@ -368,6 +369,10 @@ class YangiLotinImeService : InputMethodService() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT ||
+            keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT ||
+            keyCode == KeyEvent.KEYCODE_CAPS_LOCK
+        ) return super.onKeyDown(keyCode, event)
         if (event.isCtrlPressed || event.isAltPressed || event.isMetaPressed) {
             composer.reset()
             return super.onKeyDown(keyCode, event)
