@@ -198,14 +198,14 @@ class YangiLotinImeService : InputMethodService() {
             addCharacterRow("*\"':;!?,")
             addCharacterRow("[]{}<>_=\\", lastLetters = true)
         } else if (cyrillicLayout) {
-            addCharacterRow("қғҳёъэщ")
+            addCharacterRow("қғҳёъэщ", sideInset = 1.5f)
             addCharacterRow("йцукенгшўзх")
             addCharacterRow("фывапролдж")
             addCharacterRow("ячсмитьбю", lastLetters = true)
         } else {
             addNumberRow()
             addCharacterRow("qwertyuiop")
-            addCharacterRow("asdfghjkl")
+            addCharacterRow("asdfghjkl", sideInset = 0.5f)
             addCharacterRow("zxcvbnm", lastLetters = true)
         }
         addBottomRow()
@@ -240,9 +240,15 @@ class YangiLotinImeService : InputMethodService() {
         }
     }
 
-    private fun addCharacterRow(characters: String, lastLetters: Boolean = false) {
+    private fun addCharacterRow(
+        characters: String,
+        lastLetters: Boolean = false,
+        sideInset: Float = 0f
+    ) {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         keyRows?.addView(row)
+        if (sideInset > 0f)
+            row.addView(View(this), LinearLayout.LayoutParams(0, dp(52), sideInset))
         if (lastLetters && !symbols)
             row.addView(key("⇧", 1.45f, quiet = true) { toggleShift() })
         for (base in characters) {
@@ -265,6 +271,8 @@ class YangiLotinImeService : InputMethodService() {
         if (lastLetters) {
             row.addView(deleteKey())
         }
+        if (sideInset > 0f)
+            row.addView(View(this), LinearLayout.LayoutParams(0, dp(52), sideInset))
     }
 
     private fun deleteKey(): Button = key("⌫", 1.45f, quiet = true) { backspace() }.apply {
