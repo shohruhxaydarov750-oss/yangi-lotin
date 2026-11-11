@@ -1,8 +1,17 @@
 # Yangi Lotin v1.6.5
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
+[![Android keyboard checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml)
 
 **Yuklab olish:** [v1.6.5 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.5).
+
+**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.1.0-preview/YangiLotin-Android-v0.1.0-preview.apk)
+· [o‘rnatish yo‘riqnomasi](mobile/android/README.md). Android 8.0 yoki
+yangiroq telefonda klaviaturani bir marta tanlang; keyin Telegram kabi
+ilovalarda kirill → yangi lotin, eski lotin → yangi lotin va lotin → kirill
+rejimlarini klaviaturaning o‘zidan almashtirasiz. OFF tugmasi ham bor. APK
+emulyatorda sinovdan o‘tgan **preview** nusxa; haqiqiy telefonlar va turli
+ilovalarda qo‘shimcha tekshiruv kerak.
 
 Windows uchun oflayn o‘zbek yozuvi o‘girgichi: **kirill → yangi lotin**,
 **eski lotin → yangi lotin** hamda **eski yoki yangi lotin → kirill**.

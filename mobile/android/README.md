@@ -1,4 +1,4 @@
-# Yangi Lotin Android klaviaturasi (ishlanmoqda)
+# Yangi Lotin Android klaviaturasi (0.1.0 sinov)
 
 Bu loyiha Windows dasturidagi uch yo‘nalishni Android klaviaturasiga olib
 keladi. Ilova `InputMethodService` bo‘lib ishlaydi: foydalanuvchi uni telefon
@@ -19,6 +19,16 @@ ilovadagi joriy matn maydoniga `InputConnection` orqali yozadi.
   tugallanmagan so‘z konteksti saqlanadi (`o' → ö`, `g' → ğ`).
 
 ## Ishga tushirish
+
+Telefon uchun [sinov APK’sini GitHub’dan yuklab oling](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.1.0-preview/YangiLotin-Android-v0.1.0-preview.apk).
+APK’ni ochib o‘rnating; Android so‘rasa, fayl ochilgan ilovaga o‘rnatish
+ruxsatini bering. **Yangi Lotin**ni oching, avval **1. Sozlamalarda yoqish**,
+keyin **2. Klaviaturani tanlash**ni bosing. Matn yozadigan joyda klaviatura
+ustidagi yo‘nalishni yoki **OFF**ni tanlang. Sinov APK’si debug kaliti bilan
+imzolangan; keyingi nusxaga o‘tishda oldingisini o‘chirib qayta o‘rnatish
+kerak bo‘lishi mumkin.
+
+Manba kodidan yig‘ish uchun:
 
 Android Studio’da shu `mobile/android` katalogini loyiha sifatida oching.
 JDK 17 va Android 16 (API 36) SDK talab qilinadi. `app` modulini telefon yoki
@@ -42,9 +52,10 @@ saqlanadi. Bu **debug** APK umumiy tarqatish uchun imzolangan reliz emas.
 
 Klaviatura faqat o‘zi faol bo‘lganida kiritilgan tugmalarni o‘giradi.
 Tashqi klaviaturada yozilgan, tizim tomonidan qo‘yilgan yoki ovoz bilan
-kiritilgan matnni avtomatik ushlamaydi. Turli ilovalardagi kursor, tanlangan
-matn, avtomatik taklif va Backspace holatlari haqiqiy Android telefonida
-alohida sinovdan o‘tishi kerak. APK’ni barqaror reliz deb e’lon qilishdan
-oldin shu sinovlar bajariladi.
+kiritilgan matnni avtomatik ushlamaydi. Android 15 emulyatorida haqiqiy
+tugmalar bilan `ş/ç/ö/ğ`, katta harf, uch yo‘nalish, OFF va Backspace
+sinovdan o‘tdi. Turli ilovalardagi kursor, tanlangan matn, avtomatik taklif
+va Backspace holatlari haqiqiy Android telefonida alohida sinovdan o‘tishi
+kerak. APK’ni barqaror reliz deb e’lon qilishdan oldin shu sinovlar bajariladi.
 
 Android klaviatura API’si: https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method
