@@ -70,14 +70,24 @@ def input_node() -> ET.Element:
 
 
 def focus_input() -> None:
-    for attempt in range(6):
+    for attempt in range(10):
         visible = nodes()
         if any(n.get("text") == "ESKI→Y" for n in visible):
             print(f"Keyboard visible after {attempt} focus attempts", flush=True)
             return
+        crash_dialog = any("isn't responding" in n.get("text", "") for n in visible)
+        if crash_dialog:
+            close = next((n for n in visible if n.get("text") == "Close app"), None)
+            if close is not None:
+                print("Dismissing emulator launcher timeout", flush=True)
+                tap_node(close)
+                adb("shell", "am", "start", "-W", "-n", ACTIVITY)
+                time.sleep(2)
+                continue
         field = next((n for n in visible if n.get("class") == "android.widget.EditText"), None)
         if field is None:
-            raise AssertionError("Input field was not visible before opening the keyboard")
+            time.sleep(1)
+            continue
         print(f"Tapping input {attempt + 1}: {field.get('bounds')}", flush=True)
         tap_node(field)
         time.sleep(0.6)

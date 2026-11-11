@@ -3,11 +3,23 @@ name: Android keyboard checks
 on:
   push:
     paths:
-      - 'mobile/android/**'
+      - 'mobile/android/app/**'
+      - 'mobile/android/gradle/**'
+      - 'mobile/android/gradlew'
+      - 'mobile/android/gradlew.bat'
+      - 'mobile/android/*.gradle.kts'
+      - 'mobile/android/gradle.properties'
+      - 'mobile/android/scripts/**'
       - '.github/workflows/android.yml'
   pull_request:
     paths:
-      - 'mobile/android/**'
+      - 'mobile/android/app/**'
+      - 'mobile/android/gradle/**'
+      - 'mobile/android/gradlew'
+      - 'mobile/android/gradlew.bat'
+      - 'mobile/android/*.gradle.kts'
+      - 'mobile/android/gradle.properties'
+      - 'mobile/android/scripts/**'
       - '.github/workflows/android.yml'
   workflow_dispatch:
 
