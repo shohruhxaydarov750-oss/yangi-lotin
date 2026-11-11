@@ -277,21 +277,16 @@ class YangiLotinImeService : InputMethodService() {
 
     private fun deleteKey(): Button = key("⌫", 1.45f, quiet = true) { backspace() }.apply {
         contentDescription = "O‘chirish"
-        setOnTouchListener { view, event ->
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    backspace()
-                    repeatDelete = Runnable { repeatBackspace() }
-                    handler.postDelayed(repeatDelete!!, 430)
-                    true
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    stopRepeatingDelete()
-                    true
-                }
-                else -> true
-            }
+        setOnLongClickListener {
+            backspace()
+            repeatDelete = Runnable { repeatBackspace() }
+            handler.postDelayed(repeatDelete!!, 70)
+            true
+        }
+        setOnTouchListener { _, event ->
+            if (event.actionMasked == MotionEvent.ACTION_UP ||
+                event.actionMasked == MotionEvent.ACTION_CANCEL) stopRepeatingDelete()
+            false
         }
     }
 
