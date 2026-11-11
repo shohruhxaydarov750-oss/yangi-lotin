@@ -141,7 +141,7 @@ def main(apk: Path) -> None:
     erase_one()
 
     tap("⇧")
-    tap("s")
+    tap("S")
     tap("h")
     assert_text("Ş")
     erase_one()
