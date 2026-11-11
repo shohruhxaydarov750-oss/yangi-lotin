@@ -69,6 +69,21 @@ def input_node() -> ET.Element:
     raise AssertionError("The converter's input field was not visible")
 
 
+def focus_input() -> None:
+    for attempt in range(6):
+        visible = nodes()
+        if any(n.get("text") == "ESKI→Y" for n in visible):
+            print(f"Keyboard visible after {attempt} focus attempts", flush=True)
+            return
+        field = next((n for n in visible if n.get("class") == "android.widget.EditText"), None)
+        if field is None:
+            raise AssertionError("Input field was not visible before opening the keyboard")
+        print(f"Tapping input {attempt + 1}: {field.get('bounds')}", flush=True)
+        tap_node(field)
+        time.sleep(0.6)
+    find_button("ESKI→Y")
+
+
 def assert_text(expected: str) -> None:
     actual = input_node().get("text", "")
     if actual == HINT:
@@ -99,13 +114,9 @@ def main(apk: Path) -> None:
     print(f"Enabling {ime_id}", flush=True)
     print(adb("shell", "ime", "enable", ime_id), flush=True)
     print(adb("shell", "ime", "set", ime_id), flush=True)
-    adb("shell", "am", "start", "-n", ACTIVITY)
+    adb("shell", "am", "start", "-W", "-n", ACTIVITY)
     time.sleep(2)
-    field = input_node()
-    print(f"Input field bounds: {field.get('bounds')}", flush=True)
-    tap_node(field)
-    print(f"Input focused: {input_node().get('focused')}", flush=True)
-    find_button("ESKI→Y")
+    focus_input()
 
     tap("s")
     tap("h")
