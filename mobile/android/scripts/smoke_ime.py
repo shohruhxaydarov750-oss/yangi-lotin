@@ -108,6 +108,12 @@ def erase_one() -> None:
     assert_text("")
 
 
+def screenshot(name: str) -> None:
+    with open(Path("mobile/android") / name, "wb") as image:
+        subprocess.run(["adb", "exec-out", "screencap", "-p"],
+                       check=True, stdout=image)
+
+
 def main(apk: Path) -> None:
     print(adb("install", "-r", str(apk.resolve())), flush=True)
     adb("shell", "settings", "put", "secure", "show_ime_with_hard_keyboard", "1")
@@ -127,6 +133,17 @@ def main(apk: Path) -> None:
     adb("shell", "am", "start", "-W", "-n", ACTIVITY)
     time.sleep(2)
     focus_input()
+    assert not any("matn telefondan chiqmaydi" in n.get("text", "") for n in nodes())
+
+    tap("1")
+    assert_text("1")
+    erase_one()
+
+    tap("☺")
+    tap("😀")
+    assert_text("😀")
+    erase_one()
+    tap("ABC")
 
     tap("s")
     tap("h")
@@ -160,6 +177,9 @@ def main(apk: Path) -> None:
     tap("ш")
     assert_text("ş")
     erase_one()
+    tap("щ")
+    assert_text("ş")
+    erase_one()
 
     tap("Y→КИР")
     tap("s")
@@ -175,6 +195,18 @@ def main(apk: Path) -> None:
     assert_text("s")
     erase_one()
 
+    tap("a")
+    tap("↵")
+    assert_text("a\n")
+    tap("⌫")
+    assert_text("a")
+    erase_one()
+
+    tap("ESKI→Y")
+    screenshot("keyboard-latin.png")
+    tap("КИР→Y")
+    screenshot("keyboard-cyrillic.png")
+
 
 if __name__ == "__main__":
     try:
@@ -188,9 +220,9 @@ if __name__ == "__main__":
         except Exception as inspection_error:
             print(f"Could not inspect emulator UI: {inspection_error}")
         try:
-            with open("mobile/android/keyboard-smoke.png", "wb") as screenshot:
+            with open("mobile/android/keyboard-smoke.png", "wb") as image:
                 subprocess.run(["adb", "exec-out", "screencap", "-p"],
-                               check=True, stdout=screenshot)
+                               check=True, stdout=image)
         except Exception as inspection_error:
             print(f"Could not capture emulator screen: {inspection_error}")
         raise

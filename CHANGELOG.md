@@ -1,5 +1,13 @@
 # O‘zgarishlar
 
+## Android 0.2.0 (sinov) — 2026-11-11
+
+- Klaviatura ustidagi ortiqcha izoh satri olib tashlandi.
+- Lotin tugmalariga raqam qatori, pastki qatorga emoji tugmasi va emoji paneli qo‘shildi.
+- Xabar maydonida Enter yangi qator ochadi; uzoq bosish yuborish amalini bajaradi.
+- Android klaviaturasida `щ → ş` bo‘ldi.
+- Bu Android o‘zgarishlari Windows 1.6.5 relizidagi `щ → şç` qoidasini o‘zgartirmaydi.
+
 ## 1.6.5 — 2026-11-10
 
 - `sh → ş`, `ch → ç`, `o' → ö`, `g' → ğ` yozilgandan keyin bitta Backspace

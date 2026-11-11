@@ -1,0 +1,38 @@
+name: Publish Android preview
+
+on:
+  push:
+    tags:
+      - 'android-v*-preview'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: ''
+      - name: Install Android 16 SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Test rules and build APK
+        working-directory: mobile/android
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+      - name: Publish prerelease APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset="YangiLotin-Android-${GITHUB_REF_NAME#android-}.apk"
+          cp mobile/android/app/build/outputs/apk/debug/app-debug.apk "$asset"
+          gh release create "$GITHUB_REF_NAME" "$asset" \
+            --verify-tag --prerelease --latest=false \
+            --title "Yangi Lotin Android ${GITHUB_REF_NAME#android-v} (sinov)" \
+            --notes-file mobile/android/RELEASE_NOTES_0.2.0.md

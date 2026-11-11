@@ -10,7 +10,7 @@ enum class ConversionMode(val title: String) {
     LATIN_TO_CYRILLIC("Lotin → Кирилл")
 }
 
-/** The same deterministic spelling rules used by the Windows application. */
+/** Deterministic spelling rules for the Android keyboard. */
 object TextConverter {
     const val TUTUQ = '\u02BC'
     private val apostrophes = setOf('\'', '`', '´', '‘', '’', 'ʻ', 'ʼ')
@@ -20,7 +20,7 @@ object TextConverter {
         'ё' to "yo", 'ж' to "j", 'з' to "z", 'и' to "i", 'й' to "y",
         'к' to "k", 'л' to "l", 'м' to "m", 'н' to "n", 'о' to "o",
         'п' to "p", 'р' to "r", 'с' to "s", 'т' to "t", 'у' to "u",
-        'ф' to "f", 'х' to "x", 'ч' to "ç", 'ш' to "ş", 'щ' to "şç",
+        'ф' to "f", 'х' to "x", 'ч' to "ç", 'ш' to "ş", 'щ' to "ş",
         'ы' to "i", 'э' to "e", 'ю' to "yu", 'я' to "ya", 'ў' to "ö",
         'қ' to "q", 'ғ' to "ğ", 'ҳ' to "h"
     )

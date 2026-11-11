@@ -5,7 +5,7 @@
 
 **Yuklab olish:** [v1.6.5 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.5).
 
-**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.1.0-preview/YangiLotin-Android-v0.1.0-preview.apk)
+**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.0-preview/YangiLotin-Android-v0.2.0-preview.apk)
 · [o‘rnatish yo‘riqnomasi](mobile/android/README.md). Android 8.0 yoki
 yangiroq telefonda klaviaturani bir marta tanlang; keyin Telegram kabi
 ilovalarda kirill → yangi lotin, eski lotin → yangi lotin va lotin → kirill

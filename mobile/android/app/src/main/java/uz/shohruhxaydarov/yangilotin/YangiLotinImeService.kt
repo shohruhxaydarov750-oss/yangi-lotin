@@ -18,9 +18,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
-import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
-import android.widget.TextView
 
 /** An ordinary Android input method: it edits only the field that owns its InputConnection. */
 class YangiLotinImeService : InputMethodService() {
@@ -28,11 +26,11 @@ class YangiLotinImeService : InputMethodService() {
     private var root: LinearLayout? = null
     private var modeRow: LinearLayout? = null
     private var keyRows: LinearLayout? = null
-    private var status: TextView? = null
     private var mode = ConversionMode.OLD_TO_NEW
     private var composer = composerFor(mode)
     private var secureField = false
     private var symbols = false
+    private var emoji = false
     private var cyrillicLayout = false
     private var shift = false
     private var capsLock = false
@@ -79,11 +77,6 @@ class YangiLotinImeService : InputMethodService() {
             }
         }
         root = keyboard
-        status = TextView(this).apply {
-            textSize = 12f
-            setTextColor(if (dark) Color.parseColor("#C2D2EA") else Color.parseColor("#40516B"))
-            setPadding(dp(8), 0, dp(8), dp(3))
-        }.also { keyboard.addView(it) }
         modeRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }.also {
             keyboard.addView(it)
         }
@@ -101,6 +94,7 @@ class YangiLotinImeService : InputMethodService() {
         shift = false
         capsLock = false
         symbols = false
+        emoji = false
         renderKeyboard()
     }
 
@@ -125,6 +119,7 @@ class YangiLotinImeService : InputMethodService() {
         composer = composerFor(next)
         getSharedPreferences("keyboard", MODE_PRIVATE).edit().putString("mode", next.name).apply()
         symbols = false
+        emoji = false
         renderKeyboard()
     }
 
@@ -179,35 +174,70 @@ class YangiLotinImeService : InputMethodService() {
 
     private fun renderKeyboard() {
         if (root == null) return
-        status?.text = when {
-            secureField -> "MAXFIY MAYDON · o‘girish to‘xtatilgan"
-            mode == ConversionMode.OFF -> "O‘GIRISH OFF · oddiy yozish"
-            else -> "${mode.title} · matn telefondan chiqmaydi"
-        }
         modeRow?.removeAllViews()
         val labels = listOf("OFF", "КИР→Y", "ESKI→Y", "Y→КИР")
         ConversionMode.entries.forEachIndexed { index, direction ->
-            modeRow?.addView(key(labels[index], prominent = mode == direction, height = 38) {
+            modeRow?.addView(key(labels[index], prominent = if (secureField) {
+                direction == ConversionMode.OFF
+            } else mode == direction, height = 38) {
                 setMode(direction)
-            }.apply { textSize = 11f })
+            }.apply {
+                textSize = 11f
+                if (secureField && direction != ConversionMode.OFF) isEnabled = false
+                contentDescription = if (secureField && direction == ConversionMode.OFF)
+                    "Maxfiy maydonda o‘girish to‘xtatilgan" else labels[index]
+            })
         }
         letterButtons.clear()
         keyRows?.removeAllViews()
-        if (symbols) {
+        if (emoji) {
+            addEmojiRows()
+        } else if (symbols) {
             addCharacterRow("1234567890")
             addCharacterRow("@#%&-+()/")
-            addCharacterRow("*\"':;!?", lastLetters = true)
+            addCharacterRow("*\"':;!?,")
+            addCharacterRow("[]{}<>_=\\", lastLetters = true)
         } else if (cyrillicLayout) {
             addCharacterRow("қғҳёъэщ")
             addCharacterRow("йцукенгшўзх")
             addCharacterRow("фывапролдж")
             addCharacterRow("ячсмитьбю", lastLetters = true)
         } else {
+            addNumberRow()
             addCharacterRow("qwertyuiop")
             addCharacterRow("asdfghjkl")
             addCharacterRow("zxcvbnm", lastLetters = true)
         }
         addBottomRow()
+    }
+
+    private fun addNumberRow() {
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        keyRows?.addView(row)
+        for (digit in "1234567890") {
+            row.addView(key(digit.toString(), height = 38) { insertLiteral(digit.toString()) }
+                .apply { textSize = 17f })
+        }
+    }
+
+    private fun addEmojiRows() {
+        val rows = listOf(
+            listOf("😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "🙂"),
+            listOf("😉", "😍", "🥰", "😘", "😎", "🤔", "😢", "😭", "😡", "🤗"),
+            listOf("👍", "👏", "🙌", "👌", "💪", "🙏", "❤️", "💙", "🔥", "🎉"),
+            listOf("🌸", "⭐", "☀️", "🎂", "🎁", "🇺🇿", "🚀", "💯", "✅")
+        )
+        rows.forEachIndexed { index, characters ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            keyRows?.addView(row)
+            characters.forEach { value ->
+                row.addView(key(value) { insertLiteral(value) }.apply {
+                    textSize = 22f
+                    contentDescription = "Emoji $value"
+                })
+            }
+            if (index == rows.lastIndex) row.addView(deleteKey())
+        }
     }
 
     private fun addCharacterRow(characters: String, lastLetters: Boolean = false) {
@@ -233,24 +263,27 @@ class YangiLotinImeService : InputMethodService() {
             }
         }
         if (lastLetters) {
-            val delete = key("⌫", 1.45f, quiet = true) { backspace() }
-            delete.setOnTouchListener { view, event ->
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                        backspace()
-                        repeatDelete = Runnable { repeatBackspace() }
-                        handler.postDelayed(repeatDelete!!, 430)
-                        true
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        stopRepeatingDelete()
-                        true
-                    }
-                    else -> true
+            row.addView(deleteKey())
+        }
+    }
+
+    private fun deleteKey(): Button = key("⌫", 1.45f, quiet = true) { backspace() }.apply {
+        contentDescription = "O‘chirish"
+        setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    backspace()
+                    repeatDelete = Runnable { repeatBackspace() }
+                    handler.postDelayed(repeatDelete!!, 430)
+                    true
                 }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    stopRepeatingDelete()
+                    true
+                }
+                else -> true
             }
-            row.addView(delete)
         }
     }
 
@@ -259,9 +292,14 @@ class YangiLotinImeService : InputMethodService() {
         keyRows?.addView(row)
         row.addView(key(if (symbols) "ABC" else "?123", 1.25f, quiet = true, height = 52) {
             symbols = !symbols
+            emoji = false
             renderKeyboard()
         })
-        row.addView(key(",", 0.65f, height = 52) { insertLiteral(",") })
+        row.addView(key(if (emoji) "ABC" else "☺", 0.65f, quiet = true, height = 52) {
+            emoji = !emoji
+            symbols = false
+            renderKeyboard()
+        }.apply { contentDescription = if (emoji) "Harflarga qaytish" else "Emoji" })
         row.addView(key("ʼ", 0.65f, height = 52) { insertCharacter('ʼ') })
         row.addView(key("🌐", 0.9f, quiet = true, height = 52) {
             if (shouldOfferSwitchingToNextInputMethod()) switchToNextInputMethod(false)
@@ -269,8 +307,14 @@ class YangiLotinImeService : InputMethodService() {
                 .showInputMethodPicker()
         }.apply { contentDescription = "Boshqa klaviaturaga o‘tish" })
         row.addView(key("bo‘sh joy", 3.0f, height = 52) { insertLiteral(" ") })
-        row.addView(key(".", 0.65f, height = 52) { insertLiteral(".") })
-        row.addView(key("↵", 1.0f, prominent = true, height = 52) { enter() })
+        row.addView(key(".", 0.65f, height = 52) { insertLiteral(".") }.apply {
+            contentDescription = "Nuqta. Uzoq bosish: vergul"
+            setOnLongClickListener { insertLiteral(","); true }
+        })
+        row.addView(key("↵", 1.0f, prominent = true, height = 52) { enter() }.apply {
+            contentDescription = "Yangi qator. Uzoq bosish: yuborish yoki davom etish"
+            setOnLongClickListener { performEditorAction(); true }
+        })
     }
 
     private fun letterLabel(base: Char): String = letterValue(base).toString()
@@ -379,13 +423,23 @@ class YangiLotinImeService : InputMethodService() {
 
     private fun enter() {
         composer.reset()
+        val info = currentInputEditorInfo
+        val inputType = info?.inputType ?: 0
+        val imeOptions = info?.imeOptions ?: 0
+        if (EnterBehavior.shouldInsertNewline(inputType, imeOptions)) {
+            currentInputConnection?.commitText("\n", 1)
+        } else {
+            performEditorAction()
+        }
+    }
+
+    private fun performEditorAction() {
+        composer.reset()
         val action = currentInputEditorInfo?.imeOptions?.and(EditorInfo.IME_MASK_ACTION)
             ?: EditorInfo.IME_ACTION_NONE
-        if (action != EditorInfo.IME_ACTION_NONE && action != EditorInfo.IME_ACTION_UNSPECIFIED) {
+        if (action != EditorInfo.IME_ACTION_NONE && action != EditorInfo.IME_ACTION_UNSPECIFIED)
             currentInputConnection?.performEditorAction(action)
-        } else {
-            currentInputConnection?.commitText("\n", 1)
-        }
+        else currentInputConnection?.commitText("\n", 1)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -399,7 +453,7 @@ class YangiLotinImeService : InputMethodService() {
         }
         when (keyCode) {
             KeyEvent.KEYCODE_DEL -> backspace()
-            KeyEvent.KEYCODE_ENTER -> enter()
+            KeyEvent.KEYCODE_ENTER -> if (event.isShiftPressed) insertLiteral("\n") else enter()
             else -> {
                 val value = event.unicodeChar
                 if (value <= 0 || value > Char.MAX_VALUE.code) {

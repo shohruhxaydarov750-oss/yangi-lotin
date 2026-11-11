@@ -1,4 +1,4 @@
-# Yangi Lotin Android klaviaturasi (0.1.0 sinov)
+# Yangi Lotin Android klaviaturasi (0.2.0 sinov)
 
 Bu loyiha Windows dasturidagi uch yo‘nalishni Android klaviaturasiga olib
 keladi. Ilova `InputMethodService` bo‘lib ishlaydi: foydalanuvchi uni telefon
@@ -8,9 +8,16 @@ ilovadagi joriy matn maydoniga `InputConnection` orqali yozadi.
 ## Hozirgi holat
 
 - Kirill → yangi lotin, eski lotin → yangi lotin, lotin → kirill va OFF.
-- Klaviatura ustida tezkor rejimlar, inglizcha va o‘zbekcha kirillcha tugmalar,
-  raqamlar, Shift/Caps Lock, uzoq bosiladigan `ö/ğ/ş/ç`, boshqa klaviaturaga
-  o‘tish tugmasi.
+- Klaviatura ustida tezkor rejimlar; ortiqcha izoh satri yo‘q. Lotin qismida
+  doimiy raqam qatori, kirill qismida o‘zbekcha maxsus harflar qatori bor.
+  Ikkalasi ham bir xil balandlikdagi besh qatorli klaviatura.
+- Emoji tugmasi va oflayn emoji paneli, Shift/Caps Lock, uzoq bosiladigan
+  `ö/ğ/ş/ç`, boshqa klaviaturaga o‘tish tugmasi. Telegram stikerlari uchun
+  Telegramning o‘z stiker panelidan foydalaniladi.
+- Xabar maydonida Enter yangi qator ochadi; Enter’ni uzoq bosish maydonning
+  yuborish/davom etish amalini bajaradi. Qidiruv kabi bir qatorli maydonlarda
+  odatiy Enter amali saqlanadi.
+- Android klaviaturasidagi `щ` bitta `ş`ga aylanadi.
 - `sh → ş` kabi bitta harfga aylangan juftlik bir Backspace bilan o‘chadi.
 - Maxfiy parol maydonida o‘girish avtomatik to‘xtaydi.
 - Asosiy oynada matnni qo‘yish, o‘girish, nusxalash va tozalash.
@@ -20,7 +27,7 @@ ilovadagi joriy matn maydoniga `InputConnection` orqali yozadi.
 
 ## Ishga tushirish
 
-Telefon uchun [sinov APK’sini GitHub’dan yuklab oling](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.1.0-preview/YangiLotin-Android-v0.1.0-preview.apk).
+Telefon uchun [sinov APK’sini GitHub’dan yuklab oling](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.0-preview/YangiLotin-Android-v0.2.0-preview.apk).
 APK’ni ochib o‘rnating; Android so‘rasa, fayl ochilgan ilovaga o‘rnatish
 ruxsatini bering. **Yangi Lotin**ni oching, avval **1. Sozlamalarda yoqish**,
 keyin **2. Klaviaturani tanlash**ni bosing. Matn yozadigan joyda klaviatura
@@ -54,8 +61,9 @@ Klaviatura faqat o‘zi faol bo‘lganida kiritilgan tugmalarni o‘giradi.
 Tashqi klaviaturada yozilgan, tizim tomonidan qo‘yilgan yoki ovoz bilan
 kiritilgan matnni avtomatik ushlamaydi. Android 15 emulyatorida haqiqiy
 tugmalar bilan `ş/ç/ö/ğ`, katta harf, uch yo‘nalish, OFF va Backspace
-sinovdan o‘tdi. Turli ilovalardagi kursor, tanlangan matn, avtomatik taklif
-va Backspace holatlari haqiqiy Android telefonida alohida sinovdan o‘tishi
+sinovdan o‘tdi. Emoji, raqam qatori, `щ → ş` va Enter’ning yangi qator amali
+ham emulyatorda tekshiriladi. Turli ilovalardagi kursor, tanlangan matn,
+avtomatik taklif, Enter va Backspace holatlari haqiqiy Android telefonida alohida sinovdan o‘tishi
 kerak. APK’ni barqaror reliz deb e’lon qilishdan oldin shu sinovlar bajariladi.
 
 Android klaviatura API’si: https://developer.android.com/develop/ui/views/touch-and-input/creating-input-method

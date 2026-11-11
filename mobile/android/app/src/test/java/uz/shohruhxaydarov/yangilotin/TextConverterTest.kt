@@ -12,7 +12,8 @@ class TextConverterTest {
             "Ғалла" to "Ğalla", "Шаҳар" to "Şahar", "Чирчиқ" to "Çirçiq",
             "чўл" to "çöl", "тоғ" to "toğ", "ер" to "yer", "Европа" to "Yevropa",
             "поезд" to "poyezd", "келди" to "keldi", "ёш" to "yoş",
-            "юрак" to "yurak", "яхши" to "yaxşi"
+            "юрак" to "yurak", "яхши" to "yaxşi", "щ" to "ş",
+            "Щ" to "Ş", "Щука" to "Şuka"
         )
         cases.forEach { (source, expected) ->
             assertEquals(source, expected, TextConverter.cyrillicToNew(source))

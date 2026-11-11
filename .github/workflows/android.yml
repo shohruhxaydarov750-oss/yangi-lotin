@@ -63,6 +63,11 @@ jobs:
           profile: pixel_4
           script: python3 mobile/android/scripts/smoke_ime.py mobile/android/app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v7
+        with:
+          name: YangiLotin-Android-keyboard-screenshots
+          path: mobile/android/keyboard-*.png
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: YangiLotin-Android-emulator-failure
