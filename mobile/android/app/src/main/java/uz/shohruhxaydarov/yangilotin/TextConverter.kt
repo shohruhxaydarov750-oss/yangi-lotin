@@ -44,7 +44,7 @@ object TextConverter {
         "sirka" to "сирка", "sirk" to "цирк", "sement" to "цемент",
         "konsert" to "концерт", "aksiya" to "акция", "abzas" to "абзац",
         "aseton" to "ацетон", "asetilen" to "ацетилен",
-        "telesentr" to "телецентр", "pitssa" to "пицца",
+        "telesentr" to "телецентр",
         "obyekt" to "объект", "subyekt" to "субъект",
         "podyezd" to "подъезд", "inyeksiya" to "инъекция",
         "adyutant" to "адъютант", "konyunktura" to "конъюнктура",
@@ -235,11 +235,6 @@ object TextConverter {
             val lowerFirst = first.lowercaseChar()
             if (lowerFirst == 'y' && second.lowercaseChar() in yVowels) {
                 result.append(case(yVowels.getValue(second.lowercaseChar()), "$first$second"))
-                index += 2
-                continue
-            }
-            if (lowerFirst == 't' && second.lowercaseChar() == 's') {
-                result.append(case("ц", "$first$second"))
                 index += 2
                 continue
             }

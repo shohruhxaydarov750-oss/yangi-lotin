@@ -1,4 +1,4 @@
-# Yangi Lotin Android klaviaturasi (0.2.1 sinov)
+# Yangi Lotin Android klaviaturasi (0.2.2 sinov)
 
 Bu loyiha Windows dasturidagi uch yo‘nalishni Android klaviaturasiga olib
 keladi. Ilova `InputMethodService` bo‘lib ishlaydi: foydalanuvchi uni telefon
@@ -19,6 +19,7 @@ ilovadagi joriy matn maydoniga `InputConnection` orqali yozadi.
   yuborish/davom etish amalini bajaradi. Qidiruv kabi bir qatorli maydonlarda
   odatiy Enter amali saqlanadi.
 - Android klaviaturasidagi `щ` bitta `ş`ga aylanadi.
+- Lotin → kirillda `ts` ikkita harf bo‘lib `тс`ga aylanadi; `ц` chiqmaydi.
 - `sh → ş` kabi bitta harfga aylangan juftlik bir Backspace bilan o‘chadi.
 - Maxfiy parol maydonida o‘girish avtomatik to‘xtaydi.
 - Asosiy oynada matnni qo‘yish, o‘girish, nusxalash va tozalash.
@@ -28,7 +29,7 @@ ilovadagi joriy matn maydoniga `InputConnection` orqali yozadi.
 
 ## Ishga tushirish
 
-Telefon uchun [sinov APK’sini GitHub’dan yuklab oling](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.1-preview/YangiLotin-Android-v0.2.1-preview.apk).
+Telefon uchun [sinov APK’sini GitHub’dan yuklab oling](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.2-preview/YangiLotin-Android-v0.2.2-preview.apk).
 APK’ni ochib o‘rnating; Android so‘rasa, fayl ochilgan ilovaga o‘rnatish
 ruxsatini bering. **Yangi Lotin**ni oching, avval **1. Sozlamalarda yoqish**,
 keyin **2. Klaviaturani tanlash**ni bosing. Matn yozadigan joyda klaviatura

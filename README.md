@@ -1,11 +1,11 @@
-# Yangi Lotin v1.6.6
+# Yangi Lotin v1.6.7
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 [![Android keyboard checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml)
 
-**Yuklab olish:** [v1.6.6 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.6).
+**Yuklab olish:** [v1.6.7 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.7).
 
-**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.1-preview/YangiLotin-Android-v0.2.1-preview.apk)
+**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.2-preview/YangiLotin-Android-v0.2.2-preview.apk)
 · [o‘rnatish yo‘riqnomasi](mobile/android/README.md). Android 8.0 yoki
 yangiroq telefonda klaviaturani bir marta tanlang; keyin Telegram kabi
 ilovalarda kirill → yangi lotin, eski lotin → yangi lotin va lotin → kirill
@@ -249,12 +249,13 @@ qo‘yadi. Matn maydonlarida Ctrl+A va Ctrl+C odatdagidek ishlaydi.
 - eski va yangi harflar bir xil o‘qiladi: `sh/ş → ш`, `ch/ç → ч`,
   `o‘/ö → ў`, `g‘/ğ → ғ`;
 - `yo/yu/ya → ё/ю/я`, so‘z boshidagi `e → э`, `ye → е`;
+- `ts → тс` (`ц`ga birlashtirilmaydi), bosh harflarda ham: `TS → ТС`;
 - harf ichidagi alohida tutuq odatda `ъ`: `maʼno → маъно`;
 - bosh va kichik harflar, satrlar, tinish belgilari saqlanadi.
 
 Bu yo‘nalish **aniq teskari nusxa emas**. Masalan, `s` harfi avvalgi
-kirill matnda `с` yoki `ц` bo‘lganini, `ts` esa `ц` yoki `тс` bo‘lganini
-har doim bilib bo‘lmaydi. `ye` hamda lotinda tushib qolgan `ъ/ь` ayrim
+kirill matnda `с` yoki `ц` bo‘lganini har doim bilib bo‘lmaydi. Shu bois
+`ts` odatda ikki harf bo‘lib `тс`ga o‘tadi. `ye` hamda lotinda tushib qolgan `ъ/ь` ayrim
 so‘zlarda qo‘shimcha ma’no yoki lug‘at talab qiladi. Dastur qat’iy,
 izchil qoidalarni qo‘llaydi; 2026-yilgi qonun to‘liq lotin → kirill
 algoritmini rasmiy standart sifatida belgilamaydi.

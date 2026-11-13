@@ -195,6 +195,12 @@ def main(apk: Path) -> None:
     erase_one()
 
     tap("Y→КИР")
+    tap("t")
+    tap("s")
+    assert_text("тс")
+    tap("⌫")
+    assert_text("т")
+    erase_one()
     tap("s")
     tap("h")
     assert_text("ш")

@@ -1,5 +1,13 @@
 # O‘zgarishlar
 
+## Android 0.2.2 va Windows 1.6.7 — 2026-11-13
+
+- Lotin → kirill rejimida `ts` avtomatik `ц`ga birlashtirilmaydi:
+  `ts → тс`, `TS → ТС`.
+- Eski lotin → yangi lotin rejimida `ts` o‘z holicha qoladi.
+- Android klaviaturasida shu tugmalarni ketma-ket bosish va bir marta
+  Backspace bilan o‘chirish sinovi qo‘shildi.
+
 ## Android 0.2.1 va Windows 1.6.6 — 2026-11-13
 
 - Windowsdagi `щ → şç` qoidasi Android bilan bir xil `щ → ş` bo‘ldi.

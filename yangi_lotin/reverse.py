@@ -2,7 +2,8 @@
 
 Both Latin spellings use the same output direction.  This is a spelling
 transliterator, not a dictionary or a perfect inverse: Latin omits some
-Cyrillic distinctions, especially ъ/ь and positional ц.  A small table of
+Cyrillic distinctions, especially ъ/ь and positional ц. Typed ``ts`` stays
+two letters (тс); a small table of
 common established loan spellings covers cases that the letters cannot infer.
 """
 
@@ -40,7 +41,6 @@ _WORD_STEM_OVERRIDES = {
     "aseton": "ацетон",
     "asetilen": "ацетилен",
     "telesentr": "телецентр",
-    "pitssa": "пицца",
     "obyekt": "объект",
     "subyekt": "субъект",
     "podyezd": "подъезд",
@@ -116,12 +116,6 @@ def _convert_token(token: str) -> tuple[str, int]:
 
         if lower == "y" and second.lower() in _Y_VOWEL_MAP:
             converted.append(_case(_Y_VOWEL_MAP[second.lower()], first + second))
-            count += 1
-            index += 2
-            continue
-
-        if lower == "t" and second.lower() == "s":
-            converted.append(_case("ц", first + second))
             count += 1
             index += 2
             continue

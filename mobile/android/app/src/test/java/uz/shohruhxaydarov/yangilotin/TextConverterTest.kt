@@ -57,7 +57,7 @@ class TextConverterTest {
             "SHOVQIN" to "ŞOVQIN", "CHIROYLI" to "ÇIROYLI",
             "O'G'IL" to "ÖĞIL", "Sh Ch sH cH" to "Ş Ç Ş Ç",
             "'go'" to "'go'", "‘o’" to "‘o’",
-            "'o''" to "'ö'", "‘oʼ’" to "‘ö’"
+            "'o''" to "'ö'", "‘oʼ’" to "‘ö’", "ts" to "ts"
         )
         cases.forEach { (source, expected) ->
             assertEquals(source, expected, TextConverter.modernizeOldLatin(source))
@@ -83,7 +83,10 @@ class TextConverterTest {
             "obyekt" to "объект", "kompyuter" to "компьютер",
             "iyun" to "июнь", "iyunda" to "июнда",
             "sentyabr" to "сентябрь", "sentyabrda" to "сентябрда",
-            "poçtalyon" to "почтальон", "möjiza" to "мўъжиза"
+            "poçtalyon" to "почтальон", "möjiza" to "мўъжиза",
+            "ts" to "тс", "Ts" to "Тс", "tS" to "тС", "TS" to "ТС",
+            "litsey" to "литсей", "militsiya" to "милитсия",
+            "konstitutsiya" to "конститутсия", "pitssa" to "питсса"
         )
         cases.forEach { (source, expected) ->
             assertEquals(source, expected, TextConverter.latinToCyrillic(source))

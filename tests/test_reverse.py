@@ -84,9 +84,10 @@ class LatinToCyrillicTests(unittest.TestCase):
             "konsert": "концерт",
             "aksiya": "акция",
             "abzas": "абзац",
-            "litsey": "лицей",
-            "militsiya": "милиция",
-            "konstitutsiya": "конституция",
+            "litsey": "литсей",
+            "militsiya": "милитсия",
+            "konstitutsiya": "конститутсия",
+            "pitssa": "питсса",
             "aseton": "ацетон",
             "obyekt": "объект",
             "kompyuter": "компьютер",
@@ -108,6 +109,14 @@ class LatinToCyrillicTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertEqual(latin_to_cyrillic(source), expected)
 
+    def test_ts_stays_two_letters(self) -> None:
+        for source, expected in {
+            "ts": "тс", "Ts": "Тс", "tS": "тС", "TS": "ТС",
+            "matn": "матн", "at+s": "ат+с",
+        }.items():
+            with self.subTest(source=source):
+                self.assertEqual(latin_to_cyrillic(source), expected)
+
     def test_preserves_non_latin_and_formatting(self) -> None:
         source = "Salom, dunyo! 2026 😊\r\n\r\nСалом / w c."
         expected = "Салом, дунё! 2026 😊\r\n\r\nСалом / w c."
@@ -125,7 +134,7 @@ class LatinToCyrillicTests(unittest.TestCase):
                 self.assertFalse(is_latin_source_character(character))
 
     def test_live_prefix_and_backspace_follow_reverse_output(self) -> None:
-        for word in ("salom", "shahar", "o'zbek", "yaxşi", "sirkda", "obyektga"):
+        for word in ("salom", "shahar", "o'zbek", "yaxşi", "sirkda", "obyektga", "ts"):
             with self.subTest(word=word):
                 composer = LiveComposer(renderer=latin_to_cyrillic)
                 visible = ""
