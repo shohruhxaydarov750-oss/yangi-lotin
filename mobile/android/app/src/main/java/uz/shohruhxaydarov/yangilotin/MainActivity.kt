@@ -164,8 +164,19 @@ class MainActivity : Activity() {
         converter.addView(actions)
         actions.addView(actionButton("Qo‘yish") {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val text = clipboard.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString()
-            if (!text.isNullOrEmpty()) input.text?.replace(input.selectionStart, input.selectionEnd, text)
+            val clip = clipboard.primaryClip
+            val text = if (clip != null && clip.itemCount > 0)
+                clip.getItemAt(0).coerceToText(this)?.toString() else null
+            val editable = input.text
+            if (!text.isNullOrEmpty() && editable != null) {
+                val start = if (input.selectionStart < 0) editable.length
+                    else input.selectionStart.coerceIn(0, editable.length)
+                val end = if (input.selectionEnd < 0) start
+                    else input.selectionEnd.coerceIn(0, editable.length)
+                val from = minOf(start, end)
+                editable.replace(from, maxOf(start, end), text)
+                input.setSelection(from + text.length)
+            }
         }, LinearLayout.LayoutParams(0, dp(43), 1f).apply { rightMargin = dp(4) })
         actions.addView(actionButton("Nusxalash", primary = true) {
             val result = if (input.text.isNullOrEmpty()) "" else output.text.toString()

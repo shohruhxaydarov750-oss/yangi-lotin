@@ -1,5 +1,14 @@
 # O‘zgarishlar
 
+## Android 0.2.1 va Windows 1.6.6 — 2026-11-13
+
+- Windowsdagi `щ → şç` qoidasi Android bilan bir xil `щ → ş` bo‘ldi.
+- Androidda Shift/Caps Lock holati ko‘rinadi; kursor o‘zgarganda harf xom
+  yozilib qolishi va asosiy oynada Qo‘yish tugmasining kursor xatosi tuzatildi.
+- Android Enter amali xabar va qidiruv maydonlarida alohida sinovdan o‘tadi.
+- Android chiqarish jarayoni har versiyaning o‘z izoh faylini ishlatadi;
+  Windows EXE va portable ZIP ham teg qo‘yilganda avtomatik chiqariladi.
+
 ## Android 0.2.0 (sinov) — 2026-11-11
 
 - Klaviatura ustidagi ortiqcha izoh satri olib tashlandi.

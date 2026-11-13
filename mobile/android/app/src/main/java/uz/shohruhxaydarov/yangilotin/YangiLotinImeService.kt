@@ -36,6 +36,7 @@ class YangiLotinImeService : InputMethodService() {
     private var capsLock = false
     private var lastShiftTap = 0L
     private val letterButtons = mutableListOf<Pair<Button, Char>>()
+    private var shiftButton: Button? = null
     private val consumedHardwareKeys = mutableSetOf<Int>()
     private var repeatDelete: Runnable? = null
 
@@ -89,6 +90,8 @@ class YangiLotinImeService : InputMethodService() {
 
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
+        stopRepeatingDelete()
+        consumedHardwareKeys.clear()
         composer.reset()
         secureField = isProtectedField(attribute?.inputType ?: 0)
         shift = false
@@ -100,6 +103,7 @@ class YangiLotinImeService : InputMethodService() {
 
     override fun onFinishInput() {
         composer.reset()
+        consumedHardwareKeys.clear()
         stopRepeatingDelete()
         super.onFinishInput()
     }
@@ -189,6 +193,7 @@ class YangiLotinImeService : InputMethodService() {
             })
         }
         letterButtons.clear()
+        shiftButton = null
         keyRows?.removeAllViews()
         if (emoji) {
             addEmojiRows()
@@ -209,6 +214,7 @@ class YangiLotinImeService : InputMethodService() {
             addCharacterRow("zxcvbnm", lastLetters = true)
         }
         addBottomRow()
+        refreshLetterLabels()
     }
 
     private fun addNumberRow() {
@@ -249,8 +255,11 @@ class YangiLotinImeService : InputMethodService() {
         keyRows?.addView(row)
         if (sideInset > 0f)
             row.addView(View(this), LinearLayout.LayoutParams(0, dp(52), sideInset))
-        if (lastLetters && !symbols)
-            row.addView(key("⇧", 1.45f, quiet = true) { toggleShift() })
+        if (lastLetters && !symbols) {
+            val shiftKey = key("⇧", 1.45f, quiet = true) { toggleShift() }
+            shiftButton = shiftKey
+            row.addView(shiftKey)
+        }
         for (base in characters) {
             val button = key(letterLabel(base)) { insertCharacter(letterValue(base)) }
             row.addView(button)
@@ -339,6 +348,16 @@ class YangiLotinImeService : InputMethodService() {
 
     private fun refreshLetterLabels() {
         letterButtons.forEach { (button, base) -> button.text = letterLabel(base) }
+        shiftButton?.apply {
+            text = if (capsLock) "⇪" else "⇧"
+            background = surface(if (shift || capsLock) blue else mutedBackground)
+            setTextColor(if (shift || capsLock) Color.WHITE else keyForeground)
+            contentDescription = when {
+                capsLock -> "Caps Lock yoqilgan"
+                shift -> "Katta harf yoqilgan"
+                else -> "Katta harf"
+            }
+        }
     }
 
     private fun insertLiteral(text: String) {
@@ -364,8 +383,7 @@ class YangiLotinImeService : InputMethodService() {
         val edit = composer.feed(character)
         if (edit.backspaces > 0 && !suffixMatches(oldRendered)) {
             composer.reset()
-            composer.feed(character)
-            connection.commitText(character.toString(), 1)
+            applyEdit(composer.feed(character))
         } else {
             applyEdit(edit)
         }
@@ -408,9 +426,15 @@ class YangiLotinImeService : InputMethodService() {
         if (composer.hasToken) {
             val edit = composer.backspace()
             applyEdit(edit)
-        } else if (!connection.deleteSurroundingTextInCodePoints(1, 0)) {
-            connection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
-            connection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
+        } else {
+            val before = connection.getTextBeforeCursor(2, 0)?.toString()
+            if (!connection.deleteSurroundingTextInCodePoints(1, 0)) {
+                val after = connection.getTextBeforeCursor(2, 0)?.toString()
+                if (before == null || before == after) {
+                    connection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+                    connection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
+                }
+            }
         }
     }
 

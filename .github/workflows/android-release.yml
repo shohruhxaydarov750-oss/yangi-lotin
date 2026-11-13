@@ -31,8 +31,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           asset="YangiLotin-Android-${GITHUB_REF_NAME#android-}.apk"
+          version="${GITHUB_REF_NAME#android-v}"
+          version="${version%-preview}"
+          notes="mobile/android/RELEASE_NOTES_${version}.md"
+          test -f "$notes"
           cp mobile/android/app/build/outputs/apk/debug/app-debug.apk "$asset"
           gh release create "$GITHUB_REF_NAME" "$asset" \
             --verify-tag --prerelease --latest=false \
             --title "Yangi Lotin Android ${GITHUB_REF_NAME#android-v} (sinov)" \
-            --notes-file mobile/android/RELEASE_NOTES_0.2.0.md
+            --notes-file "$notes"

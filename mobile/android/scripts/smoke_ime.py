@@ -13,6 +13,7 @@ from pathlib import Path
 PACKAGE = "uz.shohruhxaydarov.yangilotin"
 IME = f"{PACKAGE}/.YangiLotinImeService"
 ACTIVITY = f"{PACKAGE}/.MainActivity"
+PROBE = f"{PACKAGE}/.ImeProbeActivity"
 HINT = "Matn yozing yoki qo‘ying…"
 
 
@@ -62,6 +63,17 @@ def tap(label: str) -> None:
     tap_node(find_button(label))
 
 
+def long_press(label: str) -> None:
+    bounds = find_button(label).get("bounds", "")
+    match = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", bounds)
+    if not match:
+        raise AssertionError(f"No usable bounds for {label!r}: {bounds}")
+    x1, y1, x2, y2 = map(int, match.groups())
+    x, y = (x1 + x2) // 2, (y1 + y2) // 2
+    adb("shell", "input", "swipe", str(x), str(y), str(x), str(y), "850")
+    time.sleep(0.2)
+
+
 def input_node() -> ET.Element:
     for node in nodes():
         if node.get("class") == "android.widget.EditText":
@@ -69,7 +81,7 @@ def input_node() -> ET.Element:
     raise AssertionError("The converter's input field was not visible")
 
 
-def focus_input() -> None:
+def focus_input(activity: str = ACTIVITY) -> None:
     for attempt in range(10):
         visible = nodes()
         if any(n.get("text") == "ESKI→Y" for n in visible):
@@ -81,7 +93,7 @@ def focus_input() -> None:
             if close is not None:
                 print("Dismissing emulator launcher timeout", flush=True)
                 tap_node(close)
-                adb("shell", "am", "start", "-W", "-n", ACTIVITY)
+                adb("shell", "am", "start", "-W", "-n", activity)
                 time.sleep(2)
                 continue
         field = next((n for n in visible if n.get("class") == "android.widget.EditText"), None)
@@ -96,7 +108,7 @@ def focus_input() -> None:
 
 def assert_text(expected: str) -> None:
     actual = input_node().get("text", "")
-    if actual == HINT:
+    if actual in (HINT, "Message field"):
         actual = ""
     if actual != expected:
         raise AssertionError(f"Expected input {expected!r}; saw {actual!r}")
@@ -168,6 +180,7 @@ def main(apk: Path) -> None:
     erase_one()
 
     tap("⇧")
+    assert find_button("⇧").get("content-desc") == "Katta harf yoqilgan"
     tap("S")
     tap("h")
     assert_text("Ş")
@@ -206,6 +219,34 @@ def main(apk: Path) -> None:
     screenshot("keyboard-latin.png")
     tap("КИР→Y")
     screenshot("keyboard-cyrillic.png")
+
+    adb("shell", "am", "start", "-W", "-n", PROBE)
+    time.sleep(1)
+    focus_input(PROBE)
+    tap("ESKI→Y")
+    tap("a")
+    tap("↵")
+    assert_text("a\n")
+    assert any(n.get("text") == "WAITING" for n in nodes())
+    long_press("↵")
+    assert any(n.get("text") == "SEND" for n in nodes())
+    print("PASS message Enter/newline and long-press Send", flush=True)
+
+    search = next(n for n in nodes() if n.get("class") == "android.widget.EditText"
+                  and n.get("text") == "Search field")
+    tap_node(search)
+    tap("↵")
+    assert any(n.get("text") == "SEARCH" for n in nodes())
+    print("PASS search Enter action", flush=True)
+
+    password = next(n for n in nodes() if n.get("class") == "android.widget.EditText"
+                    and n.get("text") == "Password field")
+    tap_node(password)
+    assert find_button("ESKI→Y").get("enabled") == "false"
+    tap("s")
+    tap("h")
+    assert any(n.get("text") == "PASSWORD_RAW" for n in nodes())
+    print("PASS password field keeps raw keys", flush=True)
 
 
 if __name__ == "__main__":

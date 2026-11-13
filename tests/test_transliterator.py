@@ -146,8 +146,8 @@ class CapitalisationTests(unittest.TestCase):
             "МИЛИЦИЯ": "MILITSIYA",
             "АБЗАЦ": "ABZAS",
             "МАЪНО": f"MA{TUTUQ}NO",
-            "Щука": "Şçuka",
-            "ЩУКА": "ŞÇUKA",
+            "Щука": "Şuka",
+            "ЩУКА": "ŞUKA",
         }
         for source, expected in cases.items():
             with self.subTest(source=source):

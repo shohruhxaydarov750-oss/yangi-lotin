@@ -1,7 +1,7 @@
 """Deterministic Uzbek Cyrillic/old Latin -> updated Uzbek Latin conversion.
 
-The target alphabet uses Ö/Ğ/Ş/Ç as enacted by O'RQ-1184 (2026).  This
-module intentionally has one output direction. ``transliterate`` remains
+The target alphabet uses Ö/Ğ/Ş/Ç as enacted by O'RQ-1184 (2026); the law
+is scheduled to take effect on 22 April 2027. ``transliterate`` remains
 Cyrillic-only for API compatibility; ``to_new_latin`` also modernises the
 four legacy Latin letter forms. Unrecognised characters are preserved.
 """
@@ -50,7 +50,7 @@ _DIRECT_MAP = {
     "х": "x",
     "ч": "ç",
     "ш": "ş",
-    "щ": "şç",
+    "щ": "ş",
     "ы": "i",
     "э": "e",
     "ю": "yu",

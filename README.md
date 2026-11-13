@@ -1,11 +1,11 @@
-# Yangi Lotin v1.6.5
+# Yangi Lotin v1.6.6
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 [![Android keyboard checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml)
 
-**Yuklab olish:** [v1.6.5 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.5).
+**Yuklab olish:** [v1.6.6 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.6).
 
-**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.0-preview/YangiLotin-Android-v0.2.0-preview.apk)
+**Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.1-preview/YangiLotin-Android-v0.2.1-preview.apk)
 · [o‘rnatish yo‘riqnomasi](mobile/android/README.md). Android 8.0 yoki
 yangiroq telefonda klaviaturani bir marta tanlang; keyin Telegram kabi
 ilovalarda kirill → yangi lotin, eski lotin → yangi lotin va lotin → kirill
@@ -54,7 +54,7 @@ Lotin → kirill rejimi eski va yangi shakllarni qabul qiladi:
 Bu to‘rtta harf endi shunchaki loyiha emas. O‘zbekiston Respublikasining
 2026-yil 21-oktabrdagi **O‘RQ-1184-son Qonuni** yangilangan, 28 harf va
 1 tutuq belgili alifboni belgiladi. Qonun 2027-yil 22-apreldan kuchga
-kiradi. Demak, 2026-yil 10-noyabr holatiga u qabul qilingan, ammo hali
+kiradi. Demak, 2026-yil 13-noyabr holatiga u qabul qilingan, ammo hali
 kuchga kirmagan.
 
 Rasmiy manbalar:
@@ -290,7 +290,7 @@ Oddiy harflar to‘g‘ridan-to‘g‘ri moslanadi. Muhim maxsus qoidalar:
 - butunlay bosh harfli so‘zlar bosh harfligicha qoladi:
   ЁШЛАР → YOŞLAR;
 - o‘zbek alifbosiga kirmaydigan, lekin ayrim kirill matnlarida uchraydigan
-  щ xavfsiz, yo‘qotishsiz tarzda şç bo‘ladi: ЩУКА → ŞÇUKA;
+  щ foydalanuvchi tanloviga ko‘ra bitta ş bo‘ladi: ЩУКА → ŞUKA;
 - tinish belgilari, raqamlar, bo‘shliqlar, emoji va satr/paragraflar
   o‘zgarmaydi;
 - Unicode matn NFC ko‘rinishiga keltiriladi, shuning uchun ajratib
