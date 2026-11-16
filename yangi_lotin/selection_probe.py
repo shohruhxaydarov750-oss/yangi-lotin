@@ -17,6 +17,7 @@ from enum import Enum
 
 class SelectionStatus(Enum):
     CARET = "caret"
+    CHROME_CARET = "chrome_caret"
     SUFFIX = "suffix"
     OTHER_SELECTION = "other_selection"
     UNAVAILABLE = "unavailable"

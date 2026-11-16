@@ -1,9 +1,9 @@
-# Yangi Lotin v1.6.7
+# Yangi Lotin v1.6.8
 
 [![Windows checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/ci.yml)
 [![Android keyboard checks](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml/badge.svg)](https://github.com/shohruhxaydarov750-oss/yangi-lotin/actions/workflows/android.yml)
 
-**Yuklab olish:** [v1.6.7 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.7).
+**Yuklab olish:** [v1.6.8 EXE va portable ZIP](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/tag/v1.6.8).
 
 **Android sinov klaviaturasi:** [APK’ni yuklab olish](https://github.com/shohruhxaydarov750-oss/yangi-lotin/releases/download/android-v0.2.2-preview/YangiLotin-Android-v0.2.2-preview.apk)
 · [o‘rnatish yo‘riqnomasi](mobile/android/README.md). Android 8.0 yoki

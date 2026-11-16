@@ -678,6 +678,7 @@ class LiveKeyboardTransliterator:
                     sent, expected = self._inject_edit(
                         plan,
                         selected_suffix=selection is SelectionStatus.SUFFIX,
+                        chrome_caret=selection is SelectionStatus.CHROME_CARET,
                         shift_already_down=self._shift_down(),
                     )
                     if sent == expected:
@@ -759,6 +760,7 @@ class LiveKeyboardTransliterator:
                 sent, expected = self._inject_edit(
                     plan,
                     selected_suffix=selection is SelectionStatus.SUFFIX,
+                    chrome_caret=selection is SelectionStatus.CHROME_CARET,
                     shift_already_down=self._shift_down(),
                 )
                 if sent == expected:
@@ -884,22 +886,29 @@ class LiveKeyboardTransliterator:
         status = self._selection_probe.query()
         if int(user32.GetForegroundWindow() or 0) != hwnd:
             return SelectionStatus.UNAVAILABLE
-        return status
+        # Chrome can report a caret even while an inline suggestion is active.
+        # A Backspace may only dismiss that suggestion, leaving the prior key.
+        return SelectionStatus.CHROME_CARET if status is SelectionStatus.CARET else status
 
     def _inject_edit(
         self,
         plan: EditPlan,
         selected_suffix: bool = False,
+        chrome_caret: bool = False,
         shift_already_down: bool = False,
     ) -> tuple[int, int]:
         inputs: list[INPUT] = []
-        if selected_suffix and plan.backspaces:
-            # Chromium selects its suggested suffix backwards: the anchor is
-            # at the end, while the caret sits after the text just typed.
-            # Shift+Left extends that selection over our rendered tail. One
-            # insertion then replaces both the tail and the suggestion.
-            # Repeated Backspaces are unsafe here: the first one can merely
-            # dismiss a suggestion and leave the preceding letter in place.
+        if (selected_suffix or chrome_caret) and plan.backspaces:
+            # Delete the selected completion first. Its anchor may run either
+            # way, so Shift+Left on that selection can shrink it and leave
+            # suggestion text behind. Chrome may consume this Backspace only
+            # to dismiss the completion; either way the typed prefix remains.
+            if selected_suffix:
+                inputs.append(self._keyboard_input(VK_BACK, 0, 0))
+                inputs.append(self._keyboard_input(VK_BACK, 0, KEYEVENTF_KEYUP))
+            # Select the rendered tail and replace it in one edit. Chrome can
+            # consume Backspace just to dismiss a suggestion, leaving 's' in
+            # place before an injected 'ş'.
             if not shift_already_down:
                 inputs.append(self._keyboard_input(VK_SHIFT, 0, 0))
             for _ in range(plan.backspaces):

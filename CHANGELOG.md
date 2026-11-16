@@ -1,5 +1,13 @@
 # O‘zgarishlar
 
+## Windows 1.6.8 — 2026-11-17
+
+- Chrome qidiruv maydoni va manzil satrida avtomatik taklif paydo bo‘lganda
+  `sh → sş` kabi ortiqcha harf qolishi mumkin bo‘lgan almashtirish tuzatildi.
+- Chrome oddiy kursor ko‘rsatgan holatda oldingi harf belgilanib almashtiriladi;
+  tanlangan taklif esa avval yopiladi. Taklif tanlovi ikki yo‘nalishda bo‘lishi
+  va bir marta Backspace bosilishi avtomatik sinovga qo‘shildi.
+
 ## Android 0.2.2 va Windows 1.6.7 — 2026-11-13
 
 - Lotin → kirill rejimida `ts` avtomatik `ц`ga birlashtirilmaydi:

@@ -259,7 +259,7 @@ class ModeAndCaseTests(unittest.TestCase):
         import yangi_lotin.live_mode as live_mode
 
         class EditingTarget:
-            """Model Chromium's backwards selection over an inline completion."""
+            """Model a caret or either direction of inline selection."""
 
             def __init__(self, text: str, anchor: int, caret: int) -> None:
                 self.text = text
@@ -269,6 +269,7 @@ class ModeAndCaseTests(unittest.TestCase):
                 self.left_count = 0
                 self.shift_events = 0
                 self.shift_down = False
+                self.swallow_next_backspace = False
 
             def replace_selection(self, replacement: str) -> None:
                 start, end = sorted((self.anchor, self.caret))
@@ -296,6 +297,9 @@ class ModeAndCaseTests(unittest.TestCase):
                             )
                     elif key.wVk == live_mode.VK_BACK and not released:
                         self.backspace_count += 1
+                        if self.swallow_next_backspace:
+                            self.swallow_next_backspace = False
+                            continue
                         if self.anchor != self.caret:
                             self.replace_selection("")
                         elif self.caret:
@@ -304,27 +308,31 @@ class ModeAndCaseTests(unittest.TestCase):
                 return count
 
         cases = (
-            ("normal", "as", 2, 2, EditPlan(1, "ş"), "aş", False, 1, 0),
-            ("omnibox", "asuggest", 8, 2, EditPlan(1, "ş"), "aş", True, 0, 1),
-            ("delete", "as", 2, 2, EditPlan(1, ""), "a", False, 1, 0),
-            ("delete suggestion", "asuggest", 8, 2, EditPlan(1, ""), "a", True, 1, 1),
-            ("two-character tail", "YO", 2, 2, EditPlan(2, "Yo"), "Yo", False, 2, 0),
-            ("capital", "Ssuggest", 8, 1, EditPlan(1, "Ş"), "Ş", True, 0, 1),
-            ("longer tail", "YOwhatever", 10, 2, EditPlan(2, "Yo"), "Yo", True, 0, 2),
+            ("normal", "as", 2, 2, EditPlan(1, "ş"), "aş", False, False, 1, 0),
+            ("chrome caret", "s", 1, 1, EditPlan(1, "ş"), "ş", False, True, 0, 1),
+            ("omnibox backward", "asuggest", 8, 2, EditPlan(1, "ş"), "aş", True, False, 1, 1),
+            ("omnibox forward", "asuggest", 2, 8, EditPlan(1, "ş"), "aş", True, False, 1, 1),
+            ("delete", "as", 2, 2, EditPlan(1, ""), "a", False, False, 1, 0),
+            ("chrome delete", "as", 2, 2, EditPlan(1, ""), "a", False, True, 1, 1),
+            ("delete suggestion", "asuggest", 8, 2, EditPlan(1, ""), "a", True, False, 2, 1),
+            ("two-character tail", "YO", 2, 2, EditPlan(2, "Yo"), "Yo", False, False, 2, 0),
+            ("capital", "Ssuggest", 8, 1, EditPlan(1, "Ş"), "Ş", True, False, 1, 1),
+            ("longer tail", "YOwhatever", 10, 2, EditPlan(2, "Yo"), "Yo", True, False, 1, 2),
         )
-        for label, text, anchor, caret, plan, expected, suffix, backspaces, lefts in cases:
+        for label, text, anchor, caret, plan, expected, suffix, chrome_caret, backspaces, lefts in cases:
             with self.subTest(label=label):
                 service = LiveKeyboardTransliterator(enabled=False)
                 target = EditingTarget(text, anchor, caret)
+                target.swallow_next_backspace = label == "chrome caret"
                 with patch.object(live_mode, "user32", target):
                     sent, expected_events = service._inject_edit(
-                        plan, selected_suffix=suffix,
+                        plan, selected_suffix=suffix, chrome_caret=chrome_caret,
                     )
                 self.assertEqual(sent, expected_events)
                 self.assertEqual(target.text, expected)
                 self.assertEqual(target.backspace_count, backspaces)
                 self.assertEqual(target.left_count, lefts)
-                self.assertEqual(target.shift_events, 2 if suffix else 0)
+                self.assertEqual(target.shift_events, 2 if suffix or chrome_caret else 0)
                 self.assertFalse(service._injecting)
 
     @unittest.skipUnless(os.name == "nt", "Windows keyboard injection")
@@ -351,6 +359,32 @@ class ModeAndCaseTests(unittest.TestCase):
         self.assertEqual(sent, expected)
         self.assertFalse(any(vk == live_mode.VK_SHIFT for vk, _flags in events))
         self.assertEqual(sum(vk == live_mode.VK_LEFT for vk, _flags in events), 2)
+
+    @unittest.skipUnless(os.name == "nt", "Windows Chrome selection")
+    def test_chrome_caret_is_selected_before_replacement(self) -> None:
+        from unittest.mock import patch
+
+        import yangi_lotin.live_mode as live_mode
+        from yangi_lotin.selection_probe import SelectionStatus
+
+        class ChromeWindow:
+            def GetClassNameW(self, _hwnd, buffer, _length):
+                buffer.value = "Chrome_WidgetWin_1"
+                return len(buffer.value)
+
+            def GetForegroundWindow(self):
+                return 42
+
+        service = LiveKeyboardTransliterator(enabled=False)
+        with patch.object(live_mode, "user32", ChromeWindow()):
+            for reported, expected in (
+                (SelectionStatus.CARET, SelectionStatus.CHROME_CARET),
+                (SelectionStatus.SUFFIX, SelectionStatus.SUFFIX),
+                (SelectionStatus.OTHER_SELECTION, SelectionStatus.OTHER_SELECTION),
+            ):
+                with self.subTest(reported=reported):
+                    with patch.object(service._selection_probe, "query", return_value=reported):
+                        self.assertIs(service._selection_for_edit(42, EditPlan(1, "ş")), expected)
 
     @unittest.skipUnless(os.name == "nt", "Windows keyboard packet")
     def test_unicode_packet_decodes_special_latin_character(self) -> None:
